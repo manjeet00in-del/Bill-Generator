@@ -8,9 +8,6 @@
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- html2pdf.js for Instant PDF Download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -18,20 +15,58 @@
       font-family: 'Inter', sans-serif;
       background-color: #f3f4f6;
     }
+
     /* Invoice A4 Styling */
     #invoice-preview {
       width: 100%;
       max-width: 794px;
-      min-height: 950px;
+      min-height: auto;
       background: #ffffff;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Clean Print / Save as PDF Styling */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+
+      body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .print-only-container {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      #invoice-preview {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 16px !important;
+      }
     }
   </style>
 </head>
 <body class="text-gray-800">
 
   <!-- Header -->
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+  <header class="no-print bg-white border-b border-gray-200 sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
@@ -52,7 +87,7 @@
   </header>
 
   <!-- Hero Title -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+  <section class="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
     <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Internet & Broadband Bill Generator</h1>
     <p class="text-sm sm:text-base text-gray-600 mt-1">Create GST-ready broadband invoices (SAC 998414) with live preview and instant PDF download.</p>
   </section>
@@ -62,7 +97,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
       <!-- LEFT COLUMN: INPUT FORM (5 Cols) -->
-      <div class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6">
+      <div class="no-print lg:col-span-5 bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6">
         
         <!-- Template & Logo -->
         <div>
@@ -240,35 +275,35 @@
       </div>
 
       <!-- RIGHT COLUMN: LIVE INVOICE PREVIEW (7 Cols) -->
-      <div class="lg:col-span-7 flex flex-col items-center">
-        <div class="w-full max-w-[794px] flex justify-between items-center mb-2 px-1">
+      <div class="print-only-container lg:col-span-7 flex flex-col items-center">
+        <div class="no-print w-full max-w-[794px] flex justify-between items-center mb-2 px-1">
           <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Live A4 Invoice Preview</span>
           <span class="text-xs text-gray-400">Auto-updates as you type</span>
         </div>
 
         <!-- Printable Invoice Sheet -->
-        <div id="invoice-preview" class="rounded-lg border border-gray-200 p-8 sm:p-10 text-gray-800 flex flex-col justify-between">
+        <div id="invoice-preview" class="rounded-lg border border-gray-200 p-6 sm:p-8 text-gray-800">
           <div>
             <!-- Top Accent Bar -->
-            <div id="preview-accent" class="h-2 w-full bg-blue-600 rounded-t mb-6"></div>
+            <div id="preview-accent" class="h-2 w-full bg-blue-600 rounded-t mb-5"></div>
 
             <!-- Invoice Header -->
-            <div class="flex justify-between items-start border-b border-gray-200 pb-6">
-              <div class="flex items-start gap-4">
-                <div id="preview-logo-box" class="w-14 h-14 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xl shrink-0 overflow-hidden">
+            <div class="flex justify-between items-start border-b border-gray-200 pb-5 gap-4">
+              <div class="flex items-start gap-3.5">
+                <div id="preview-logo-box" class="w-14 h-14 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden">
                   <span id="preview-logo-text">FN</span>
                   <img id="preview-logo-img" src="" alt="ISP Logo" class="hidden w-full h-full object-contain bg-white" />
                 </div>
                 <div>
-                  <h2 id="prev-ispName" class="text-xl font-bold text-gray-900">FastNet Broadband Services Pvt. Ltd.</h2>
+                  <h2 id="prev-ispName" class="text-lg sm:text-xl font-bold text-gray-900">FastNet Broadband Services Pvt. Ltd.</h2>
                   <p id="prev-ispAddress" class="text-xs text-gray-500 max-w-xs mt-1 leading-relaxed">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</p>
                   <p id="prev-ispGstin-wrap" class="text-xs font-medium text-gray-700 mt-1">GSTIN: <span id="prev-ispGstin">09AABCF1234K1Z5</span></p>
                 </div>
               </div>
 
-              <div class="text-right">
+              <div class="text-right shrink-0">
                 <span class="inline-block text-xs font-bold uppercase tracking-widest text-gray-400">Tax Invoice</span>
-                <h3 class="text-lg font-bold text-gray-900 mt-0.5" id="prev-invoiceNo">INV-2026-8492</h3>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900 mt-0.5" id="prev-invoiceNo">INV-2026-8492</h3>
                 <p class="text-xs text-gray-500 mt-1">Bill Date: <span id="prev-billDate" class="font-medium text-gray-800"></span></p>
                 <div class="mt-2">
                   <span id="prev-statusBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700">PAID</span>
@@ -277,7 +312,7 @@
             </div>
 
             <!-- Billed To & Account Summary -->
-            <div class="grid grid-cols-2 gap-6 py-6 border-b border-gray-200 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 py-5 border-b border-gray-200 text-sm">
               <div>
                 <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Billed To</p>
                 <p id="prev-custName" class="font-bold text-gray-900 text-base">Rahul Sharma</p>
@@ -285,19 +320,19 @@
                 <p id="prev-custGstin-wrap" class="text-xs font-medium text-gray-700 mt-1.5 hidden">Customer GSTIN: <span id="prev-custGstin"></span></p>
               </div>
               <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-1.5 text-xs">
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-2">
                   <span class="text-gray-500">Account / Customer ID:</span>
                   <span id="prev-accountNo" class="font-semibold text-gray-900">AC-90827163</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-2">
                   <span class="text-gray-500">SAC Code:</span>
                   <span class="font-semibold text-gray-900">998414 (Telecom Services)</span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-2">
                   <span class="text-gray-500">Billing Period:</span>
                   <span id="prev-period" class="font-semibold text-gray-900"></span>
                 </div>
-                <div class="flex justify-between">
+                <div class="flex justify-between gap-2">
                   <span class="text-gray-500">Payment Mode:</span>
                   <span id="prev-paymentMode" class="font-semibold text-gray-900">UPI</span>
                 </div>
@@ -305,34 +340,34 @@
             </div>
 
             <!-- Plan Charges Table -->
-            <div class="mt-6">
+            <div class="mt-5 overflow-x-auto">
               <table class="w-full text-left border-collapse">
                 <thead>
                   <tr class="bg-gray-100 text-gray-600 text-xs uppercase">
-                    <th class="py-3 px-4 rounded-l-lg font-semibold">Description</th>
-                    <th class="py-3 px-4 font-semibold">Plan Details</th>
-                    <th class="py-3 px-4 font-semibold">Validity</th>
-                    <th class="py-3 px-4 rounded-r-lg font-semibold text-right">Taxable Value (₹)</th>
+                    <th class="py-2.5 px-3 rounded-l-lg font-semibold">Description</th>
+                    <th class="py-2.5 px-3 font-semibold">Plan Details</th>
+                    <th class="py-2.5 px-3 font-semibold">Validity</th>
+                    <th class="py-2.5 px-3 rounded-r-lg font-semibold text-right">Taxable Value (₹)</th>
                   </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100">
                   <tr>
-                    <td class="py-4 px-4 font-medium text-gray-900">
+                    <td class="py-3.5 px-3 font-medium text-gray-900">
                       High-Speed Broadband Internet Charges
                       <span class="block text-xs text-gray-400 font-normal mt-0.5">SAC: 998414</span>
                     </td>
-                    <td class="py-4 px-4 text-gray-600">
+                    <td class="py-3.5 px-3 text-gray-600">
                       <span id="prev-planSpeed" class="font-semibold text-gray-800">100 Mbps</span> • <span id="prev-planData">Unlimited</span>
                     </td>
-                    <td class="py-4 px-4 text-gray-600" id="prev-planCycle">Monthly</td>
-                    <td class="py-4 px-4 text-right font-semibold text-gray-900" id="prev-baseAmount">₹846.61</td>
+                    <td class="py-3.5 px-3 text-gray-600" id="prev-planCycle">Monthly</td>
+                    <td class="py-3.5 px-3 text-right font-semibold text-gray-900" id="prev-baseAmount">₹846.61</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <!-- Totals & GST Breakdown -->
-            <div class="mt-6 flex justify-end">
+            <div class="mt-5 flex justify-end">
               <div class="w-full sm:w-72 space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
                   <span>Sub Total (Base Amount)</span>
@@ -364,7 +399,7 @@
           </div>
 
           <!-- Footer Declaration -->
-          <div class="border-t border-gray-200 pt-5 mt-10 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div class="border-t border-gray-200 pt-4 mt-8 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
               <p class="font-semibold text-gray-700">Terms & Conditions:</p>
               <p class="mt-0.5">1. All payments are subject to realization.</p>
@@ -381,7 +416,7 @@
     </div>
 
     <!-- SEO & Informational Content Section -->
-    <section class="mt-16 bg-white rounded-xl border border-gray-200 p-6 sm:p-8 space-y-6">
+    <section class="no-print mt-16 bg-white rounded-xl border border-gray-200 p-6 sm:p-8 space-y-6">
       <h2 class="text-xl font-bold text-gray-900">About Internet & Broadband GST Invoices in India</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 leading-relaxed">
         <div>
@@ -400,13 +435,12 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
+  <footer class="no-print bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
     <p>© 2026 NetBillGen • Built for fast, browser-based invoice formatting.</p>
   </footer>
 
   <!-- JavaScript Logic -->
   <script>
-    // Set default dates on load
     window.onload = function () {
       const today = new Date();
       const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -432,7 +466,6 @@
       const logoText = document.getElementById('preview-logo-text');
       const grandTotal = document.getElementById('prev-grandTotal');
 
-      // Reset uploaded image if preset selected
       document.getElementById('preview-logo-img').classList.add('hidden');
       logoText.classList.remove('hidden');
 
@@ -485,7 +518,7 @@
       document.getElementById('ispAddress').value = p.addr;
       logoText.innerText = p.short;
 
-      accent.className = `h-2 w-full rounded-t mb-6 ${p.bg}`;
+      accent.className = `h-2 w-full rounded-t mb-5 ${p.bg}`;
       logoBox.className = `w-14 h-14 rounded-lg text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden ${p.bg}`;
       grandTotal.className = p.text;
 
@@ -506,7 +539,6 @@
     }
 
     function updatePreview() {
-      // ISP Info
       const ispName = document.getElementById('ispName').value || 'ISP Name';
       document.getElementById('prev-ispName').innerText = ispName;
       document.getElementById('prev-signIsp').innerText = 'For ' + ispName;
@@ -518,7 +550,6 @@
 
       document.getElementById('prev-invoiceNo').innerText = document.getElementById('invoiceNo').value;
 
-      // Customer Info
       document.getElementById('prev-custName').innerText = document.getElementById('custName').value;
       document.getElementById('prev-accountNo').innerText = document.getElementById('accountNo').value;
       document.getElementById('prev-custAddress').innerText = document.getElementById('custAddress').value;
@@ -532,7 +563,6 @@
         custGstinWrap.classList.add('hidden');
       }
 
-      // Dates & Plan
       document.getElementById('prev-billDate').innerText = formatDate(document.getElementById('billDate').value);
       const fromD = formatDate(document.getElementById('fromDate').value);
       const toD = formatDate(document.getElementById('toDate').value);
@@ -543,7 +573,6 @@
       document.getElementById('prev-planCycle').innerText = document.getElementById('planCycle').value;
       document.getElementById('prev-paymentMode').innerText = document.getElementById('paymentMode').value;
 
-      // Status Badge
       const status = document.getElementById('paymentStatus').value;
       const badge = document.getElementById('prev-statusBadge');
       badge.innerText = status;
@@ -551,7 +580,6 @@
         ? 'inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700'
         : 'inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-red-100 text-red-700';
 
-      // GST Reverse Calculation (18% Inclusive)
       const total = parseFloat(document.getElementById('totalAmount').value) || 0;
       const base = total / 1.18;
       const totalGst = total - base;
@@ -564,7 +592,6 @@
       document.getElementById('prev-igst').innerText = '₹' + totalGst.toFixed(2);
       document.getElementById('prev-grandTotal').innerText = '₹' + total.toFixed(2);
 
-      // Toggle CGST+SGST vs IGST
       const gstType = document.getElementById('gstType').value;
       if (gstType === 'intra') {
         document.getElementById('intra-gst-rows').classList.remove('hidden');
@@ -576,16 +603,13 @@
     }
 
     function downloadPDF() {
-      const element = document.getElementById('invoice-preview');
       const invoiceNo = document.getElementById('invoiceNo').value || 'Internet-Bill';
-      const opt = {
-        margin: 0.3,
-        filename: `${invoiceNo}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
+      const oldTitle = document.title;
+      document.title = invoiceNo;
+      window.print();
+      setTimeout(() => {
+        document.title = oldTitle;
+      }, 1000);
     }
 
     function resetForm() {
