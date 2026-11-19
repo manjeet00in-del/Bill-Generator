@@ -8,6 +8,9 @@
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- jsPDF for Direct Crisp PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -15,58 +18,18 @@
       font-family: 'Inter', sans-serif;
       background-color: #f3f4f6;
     }
-
-    /* Invoice A4 Styling */
     #invoice-preview {
       width: 100%;
       max-width: 794px;
-      min-height: auto;
       background: #ffffff;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    }
-
-    /* Clean Print / Save as PDF Styling */
-    @media print {
-      @page {
-        size: A4 portrait;
-        margin: 10mm;
-      }
-
-      body {
-        background: #ffffff !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      .no-print {
-        display: none !important;
-      }
-
-      main {
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100% !important;
-      }
-
-      .print-only-container {
-        display: block !important;
-        width: 100% !important;
-      }
-
-      #invoice-preview {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-shadow: none !important;
-        border: none !important;
-        padding: 16px !important;
-      }
     }
   </style>
 </head>
 <body class="text-gray-800">
 
   <!-- Header -->
-  <header class="no-print bg-white border-b border-gray-200 sticky top-0 z-30">
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
@@ -87,17 +50,17 @@
   </header>
 
   <!-- Hero Title -->
-  <section class="no-print max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
     <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Internet & Broadband Bill Generator</h1>
     <p class="text-sm sm:text-base text-gray-600 mt-1">Create GST-ready broadband invoices (SAC 998414) with live preview and instant PDF download.</p>
   </section>
 
-  <!-- Main Workspace: Split Screen -->
+  <!-- Main Workspace -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
-      <!-- LEFT COLUMN: INPUT FORM (5 Cols) -->
-      <div class="no-print lg:col-span-5 bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6">
+      <!-- LEFT COLUMN: INPUT FORM -->
+      <div class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6">
         
         <!-- Template & Logo -->
         <div>
@@ -274,126 +237,123 @@
 
       </div>
 
-      <!-- RIGHT COLUMN: LIVE INVOICE PREVIEW (7 Cols) -->
-      <div class="print-only-container lg:col-span-7 flex flex-col items-center">
-        <div class="no-print w-full max-w-[794px] flex justify-between items-center mb-2 px-1">
+      <!-- RIGHT COLUMN: LIVE INVOICE PREVIEW -->
+      <div class="lg:col-span-7 flex flex-col items-center">
+        <div class="w-full max-w-[794px] flex justify-between items-center mb-2 px-1">
           <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Live A4 Invoice Preview</span>
           <span class="text-xs text-gray-400">Auto-updates as you type</span>
         </div>
 
-        <!-- Printable Invoice Sheet -->
         <div id="invoice-preview" class="rounded-lg border border-gray-200 p-6 sm:p-8 text-gray-800">
-          <div>
-            <!-- Top Accent Bar -->
-            <div id="preview-accent" class="h-2 w-full bg-blue-600 rounded-t mb-5"></div>
+          <!-- Top Accent Bar -->
+          <div id="preview-accent" class="h-2 w-full bg-blue-600 rounded-t mb-5"></div>
 
-            <!-- Invoice Header -->
-            <div class="flex justify-between items-start border-b border-gray-200 pb-5 gap-4">
-              <div class="flex items-start gap-3.5">
-                <div id="preview-logo-box" class="w-14 h-14 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden">
-                  <span id="preview-logo-text">FN</span>
-                  <img id="preview-logo-img" src="" alt="ISP Logo" class="hidden w-full h-full object-contain bg-white" />
-                </div>
-                <div>
-                  <h2 id="prev-ispName" class="text-lg sm:text-xl font-bold text-gray-900">FastNet Broadband Services Pvt. Ltd.</h2>
-                  <p id="prev-ispAddress" class="text-xs text-gray-500 max-w-xs mt-1 leading-relaxed">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</p>
-                  <p id="prev-ispGstin-wrap" class="text-xs font-medium text-gray-700 mt-1">GSTIN: <span id="prev-ispGstin">09AABCF1234K1Z5</span></p>
-                </div>
+          <!-- Invoice Header -->
+          <div class="flex justify-between items-start border-b border-gray-200 pb-5 gap-4">
+            <div class="flex items-start gap-3.5">
+              <div id="preview-logo-box" class="w-14 h-14 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden">
+                <span id="preview-logo-text">FN</span>
+                <img id="preview-logo-img" src="" alt="ISP Logo" class="hidden w-full h-full object-contain bg-white" />
               </div>
-
-              <div class="text-right shrink-0">
-                <span class="inline-block text-xs font-bold uppercase tracking-widest text-gray-400">Tax Invoice</span>
-                <h3 class="text-base sm:text-lg font-bold text-gray-900 mt-0.5" id="prev-invoiceNo">INV-2026-8492</h3>
-                <p class="text-xs text-gray-500 mt-1">Bill Date: <span id="prev-billDate" class="font-medium text-gray-800"></span></p>
-                <div class="mt-2">
-                  <span id="prev-statusBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700">PAID</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Billed To & Account Summary -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 py-5 border-b border-gray-200 text-sm">
               <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Billed To</p>
-                <p id="prev-custName" class="font-bold text-gray-900 text-base">Rahul Sharma</p>
-                <p id="prev-custAddress" class="text-xs text-gray-600 mt-1 leading-relaxed">B-42, Indira Nagar, Lucknow, Uttar Pradesh - 226016</p>
-                <p id="prev-custGstin-wrap" class="text-xs font-medium text-gray-700 mt-1.5 hidden">Customer GSTIN: <span id="prev-custGstin"></span></p>
-              </div>
-              <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-1.5 text-xs">
-                <div class="flex justify-between gap-2">
-                  <span class="text-gray-500">Account / Customer ID:</span>
-                  <span id="prev-accountNo" class="font-semibold text-gray-900">AC-90827163</span>
-                </div>
-                <div class="flex justify-between gap-2">
-                  <span class="text-gray-500">SAC Code:</span>
-                  <span class="font-semibold text-gray-900">998414 (Telecom Services)</span>
-                </div>
-                <div class="flex justify-between gap-2">
-                  <span class="text-gray-500">Billing Period:</span>
-                  <span id="prev-period" class="font-semibold text-gray-900"></span>
-                </div>
-                <div class="flex justify-between gap-2">
-                  <span class="text-gray-500">Payment Mode:</span>
-                  <span id="prev-paymentMode" class="font-semibold text-gray-900">UPI</span>
-                </div>
+                <h2 id="prev-ispName" class="text-lg sm:text-xl font-bold text-gray-900">FastNet Broadband Services Pvt. Ltd.</h2>
+                <p id="prev-ispAddress" class="text-xs text-gray-500 max-w-xs mt-1 leading-relaxed">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</p>
+                <p id="prev-ispGstin-wrap" class="text-xs font-medium text-gray-700 mt-1">GSTIN: <span id="prev-ispGstin">09AABCF1234K1Z5</span></p>
               </div>
             </div>
 
-            <!-- Plan Charges Table -->
-            <div class="mt-5 overflow-x-auto">
-              <table class="w-full text-left border-collapse">
-                <thead>
-                  <tr class="bg-gray-100 text-gray-600 text-xs uppercase">
-                    <th class="py-2.5 px-3 rounded-l-lg font-semibold">Description</th>
-                    <th class="py-2.5 px-3 font-semibold">Plan Details</th>
-                    <th class="py-2.5 px-3 font-semibold">Validity</th>
-                    <th class="py-2.5 px-3 rounded-r-lg font-semibold text-right">Taxable Value (₹)</th>
-                  </tr>
-                </thead>
-                <tbody class="text-sm divide-y divide-gray-100">
-                  <tr>
-                    <td class="py-3.5 px-3 font-medium text-gray-900">
-                      High-Speed Broadband Internet Charges
-                      <span class="block text-xs text-gray-400 font-normal mt-0.5">SAC: 998414</span>
-                    </td>
-                    <td class="py-3.5 px-3 text-gray-600">
-                      <span id="prev-planSpeed" class="font-semibold text-gray-800">100 Mbps</span> • <span id="prev-planData">Unlimited</span>
-                    </td>
-                    <td class="py-3.5 px-3 text-gray-600" id="prev-planCycle">Monthly</td>
-                    <td class="py-3.5 px-3 text-right font-semibold text-gray-900" id="prev-baseAmount">₹846.61</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="text-right shrink-0">
+              <span class="inline-block text-xs font-bold uppercase tracking-widest text-gray-400">Tax Invoice</span>
+              <h3 class="text-base sm:text-lg font-bold text-gray-900 mt-0.5" id="prev-invoiceNo">INV-2026-8492</h3>
+              <p class="text-xs text-gray-500 mt-1">Bill Date: <span id="prev-billDate" class="font-medium text-gray-800"></span></p>
+              <div class="mt-2">
+                <span id="prev-statusBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700">PAID</span>
+              </div>
             </div>
+          </div>
 
-            <!-- Totals & GST Breakdown -->
-            <div class="mt-5 flex justify-end">
-              <div class="w-full sm:w-72 space-y-2 text-sm">
+          <!-- Billed To & Account Summary -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 py-5 border-b border-gray-200 text-sm">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Billed To</p>
+              <p id="prev-custName" class="font-bold text-gray-900 text-base">Rahul Sharma</p>
+              <p id="prev-custAddress" class="text-xs text-gray-600 mt-1 leading-relaxed">B-42, Indira Nagar, Lucknow, Uttar Pradesh - 226016</p>
+              <p id="prev-custGstin-wrap" class="text-xs font-medium text-gray-700 mt-1.5 hidden">Customer GSTIN: <span id="prev-custGstin"></span></p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-1.5 text-xs">
+              <div class="flex justify-between gap-2">
+                <span class="text-gray-500">Account / Customer ID:</span>
+                <span id="prev-accountNo" class="font-semibold text-gray-900">AC-90827163</span>
+              </div>
+              <div class="flex justify-between gap-2">
+                <span class="text-gray-500">SAC Code:</span>
+                <span class="font-semibold text-gray-900">998414 (Telecom Services)</span>
+              </div>
+              <div class="flex justify-between gap-2">
+                <span class="text-gray-500">Billing Period:</span>
+                <span id="prev-period" class="font-semibold text-gray-900"></span>
+              </div>
+              <div class="flex justify-between gap-2">
+                <span class="text-gray-500">Payment Mode:</span>
+                <span id="prev-paymentMode" class="font-semibold text-gray-900">UPI</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plan Charges Table -->
+          <div class="mt-5 overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-100 text-gray-600 text-xs uppercase">
+                  <th class="py-2.5 px-3 rounded-l-lg font-semibold">Description</th>
+                  <th class="py-2.5 px-3 font-semibold">Plan Details</th>
+                  <th class="py-2.5 px-3 font-semibold">Validity</th>
+                  <th class="py-2.5 px-3 rounded-r-lg font-semibold text-right">Taxable Value (₹)</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm divide-y divide-gray-100">
+                <tr>
+                  <td class="py-3.5 px-3 font-medium text-gray-900">
+                    High-Speed Broadband Internet Charges
+                    <span class="block text-xs text-gray-400 font-normal mt-0.5">SAC: 998414</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-gray-600">
+                    <span id="prev-planSpeed" class="font-semibold text-gray-800">100 Mbps</span> • <span id="prev-planData">Unlimited</span>
+                  </td>
+                  <td class="py-3.5 px-3 text-gray-600" id="prev-planCycle">Monthly</td>
+                  <td class="py-3.5 px-3 text-right font-semibold text-gray-900" id="prev-baseAmount">₹846.61</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totals & GST Breakdown -->
+          <div class="mt-5 flex justify-end">
+            <div class="w-full sm:w-72 space-y-2 text-sm">
+              <div class="flex justify-between text-gray-600">
+                <span>Sub Total (Base Amount)</span>
+                <span id="prev-subTotal">₹846.61</span>
+              </div>
+              
+              <div id="intra-gst-rows" class="space-y-2">
                 <div class="flex justify-between text-gray-600">
-                  <span>Sub Total (Base Amount)</span>
-                  <span id="prev-subTotal">₹846.61</span>
+                  <span>CGST (9%)</span>
+                  <span id="prev-cgst">₹76.19</span>
                 </div>
-                
-                <div id="intra-gst-rows" class="space-y-2">
-                  <div class="flex justify-between text-gray-600">
-                    <span>CGST (9%)</span>
-                    <span id="prev-cgst">₹76.19</span>
-                  </div>
-                  <div class="flex justify-between text-gray-600">
-                    <span>SGST (9%)</span>
-                    <span id="prev-sgst">₹76.19</span>
-                  </div>
+                <div class="flex justify-between text-gray-600">
+                  <span>SGST (9%)</span>
+                  <span id="prev-sgst">₹76.19</span>
                 </div>
+              </div>
 
-                <div id="inter-gst-row" class="hidden flex justify-between text-gray-600">
-                  <span>IGST (18%)</span>
-                  <span id="prev-igst">₹152.39</span>
-                </div>
+              <div id="inter-gst-row" class="hidden flex justify-between text-gray-600">
+                <span>IGST (18%)</span>
+                <span id="prev-igst">₹152.39</span>
+              </div>
 
-                <div class="border-t border-gray-200 pt-2.5 flex justify-between font-bold text-base text-gray-900">
-                  <span>Grand Total (INR)</span>
-                  <span id="prev-grandTotal" class="text-blue-600">₹999.00</span>
-                </div>
+              <div class="border-t border-gray-200 pt-2.5 flex justify-between font-bold text-base text-gray-900">
+                <span>Grand Total (INR)</span>
+                <span id="prev-grandTotal" class="text-blue-600">₹999.00</span>
               </div>
             </div>
           </div>
@@ -416,7 +376,7 @@
     </div>
 
     <!-- SEO & Informational Content Section -->
-    <section class="no-print mt-16 bg-white rounded-xl border border-gray-200 p-6 sm:p-8 space-y-6">
+    <section class="mt-16 bg-white rounded-xl border border-gray-200 p-6 sm:p-8 space-y-6">
       <h2 class="text-xl font-bold text-gray-900">About Internet & Broadband GST Invoices in India</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 leading-relaxed">
         <div>
@@ -435,12 +395,15 @@
   </main>
 
   <!-- Footer -->
-  <footer class="no-print bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
+  <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
     <p>© 2026 NetBillGen • Built for fast, browser-based invoice formatting.</p>
   </footer>
 
   <!-- JavaScript Logic -->
   <script>
+    let currentThemeRGB = [37, 99, 235]; // Default Blue
+    let uploadedLogoDataUrl = null;
+
     window.onload = function () {
       const today = new Date();
       const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -466,6 +429,8 @@
       const logoText = document.getElementById('preview-logo-text');
       const grandTotal = document.getElementById('prev-grandTotal');
 
+      uploadedLogoDataUrl = null;
+      document.getElementById('logoUpload').value = '';
       document.getElementById('preview-logo-img').classList.add('hidden');
       logoText.classList.remove('hidden');
 
@@ -476,7 +441,8 @@
           addr: '4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010',
           short: 'FN',
           bg: 'bg-blue-600',
-          text: 'text-blue-600'
+          text: 'text-blue-600',
+          rgb: [37, 99, 235]
         },
         jio: {
           name: 'Reliance Jio Infocomm Limited (JioFiber)',
@@ -484,7 +450,8 @@
           addr: 'Office - 101, Saffron, Nr. Centre Point, Panchwati 5 Rasta, Ambawadi, Ahmedabad - 380006',
           short: 'Jio',
           bg: 'bg-blue-700',
-          text: 'text-blue-700'
+          text: 'text-blue-700',
+          rgb: [29, 78, 216]
         },
         airtel: {
           name: 'Bharti Airtel Limited (Airtel Xstream Fiber)',
@@ -492,7 +459,8 @@
           addr: 'Bharti Crescent, 1, Nelson Mandela Road, Vasant Kunj, Phase II, New Delhi - 110070',
           short: 'airtel',
           bg: 'bg-red-600',
-          text: 'text-red-600'
+          text: 'text-red-600',
+          rgb: [220, 38, 38]
         },
         bsnl: {
           name: 'Bharat Sanchar Nigam Limited (BSNL Bharat Fiber)',
@@ -500,7 +468,8 @@
           addr: 'Bharat Sanchar Bhawan, Harish Chandra Mathur Lane, Janpath, New Delhi - 110001',
           short: 'BSNL',
           bg: 'bg-sky-600',
-          text: 'text-sky-600'
+          text: 'text-sky-600',
+          rgb: [2, 132, 199]
         },
         act: {
           name: 'Atria Convergence Technologies Ltd (ACT Fibernet)',
@@ -508,7 +477,8 @@
           addr: '2nd & 3rd Floor, Indian Express Building, No. 1, Queens Road, Bengaluru - 560001',
           short: 'ACT',
           bg: 'bg-rose-600',
-          text: 'text-rose-600'
+          text: 'text-rose-600',
+          rgb: [225, 29, 72]
         }
       };
 
@@ -517,6 +487,7 @@
       document.getElementById('ispGstin').value = p.gstin;
       document.getElementById('ispAddress').value = p.addr;
       logoText.innerText = p.short;
+      currentThemeRGB = p.rgb;
 
       accent.className = `h-2 w-full rounded-t mb-5 ${p.bg}`;
       logoBox.className = `w-14 h-14 rounded-lg text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden ${p.bg}`;
@@ -530,6 +501,7 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function (e) {
+        uploadedLogoDataUrl = e.target.result;
         const img = document.getElementById('preview-logo-img');
         img.src = e.target.result;
         img.classList.remove('hidden');
@@ -603,13 +575,265 @@
     }
 
     function downloadPDF() {
-      const invoiceNo = document.getElementById('invoiceNo').value || 'Internet-Bill';
-      const oldTitle = document.title;
-      document.title = invoiceNo;
-      window.print();
-      setTimeout(() => {
-        document.title = oldTitle;
-      }, 1000);
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const [r, g, b] = currentThemeRGB;
+
+      // Gather values
+      const ispName = document.getElementById('ispName').value || 'ISP Name';
+      const ispAddress = document.getElementById('ispAddress').value || '';
+      const ispGstin = document.getElementById('ispGstin').value.trim();
+      const invoiceNo = document.getElementById('invoiceNo').value || 'INV-001';
+      const billDate = formatDate(document.getElementById('billDate').value);
+      const fromD = formatDate(document.getElementById('fromDate').value);
+      const toD = formatDate(document.getElementById('toDate').value);
+      const status = document.getElementById('paymentStatus').value;
+
+      const custName = document.getElementById('custName').value || 'Customer';
+      const custAddress = document.getElementById('custAddress').value || '';
+      const custGstin = document.getElementById('custGstin').value.trim();
+      const accountNo = document.getElementById('accountNo').value || '';
+      const paymentMode = document.getElementById('paymentMode').value || '';
+
+      const planSpeed = document.getElementById('planSpeed').value;
+      const planData = document.getElementById('planData').value;
+      const planCycle = document.getElementById('planCycle').value;
+      const gstType = document.getElementById('gstType').value;
+
+      const total = parseFloat(document.getElementById('totalAmount').value) || 0;
+      const base = total / 1.18;
+      const totalGst = total - base;
+      const halfGst = totalGst / 2;
+
+      // Top Accent Bar
+      doc.setFillColor(r, g, b);
+      doc.rect(14, 14, 182, 3, 'F');
+
+      // Logo Box or Uploaded Image
+      let textStartX = 14;
+      if (uploadedLogoDataUrl) {
+        try {
+          doc.addImage(uploadedLogoDataUrl, 'PNG', 14, 22, 16, 16);
+          textStartX = 34;
+        } catch (err) {
+          textStartX = 14;
+        }
+      } else {
+        const shortLogo = document.getElementById('preview-logo-text').innerText || 'ISP';
+        doc.setFillColor(r, g, b);
+        doc.roundedRect(14, 22, 16, 16, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.text(shortLogo, 22, 31.5, { align: 'center' });
+        textStartX = 34;
+      }
+
+      // ISP Header Info
+      doc.setTextColor(17, 24, 39);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.text(ispName, textStartX, 27);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(107, 114, 128);
+      const ispAddrLines = doc.splitTextToSize(ispAddress, 95);
+      doc.text(ispAddrLines, textStartX, 32);
+
+      let headerBottomY = 32 + (ispAddrLines.length * 4);
+      if (ispGstin) {
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(55, 65, 81);
+        doc.text(`GSTIN: ${ispGstin}`, textStartX, headerBottomY + 1);
+        headerBottomY += 5;
+      }
+
+      // Right Side: Tax Invoice Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(156, 163, 175);
+      doc.text('TAX INVOICE', 196, 26, { align: 'right' });
+
+      doc.setFontSize(12);
+      doc.setTextColor(17, 24, 39);
+      doc.text(invoiceNo, 196, 32, { align: 'right' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(107, 114, 128);
+      doc.text(`Bill Date: ${billDate}`, 196, 37, { align: 'right' });
+
+      // Status Badge
+      if (status === 'PAID') {
+        doc.setFillColor(220, 252, 231);
+        doc.setTextColor(21, 128, 61);
+      } else {
+        doc.setFillColor(254, 226, 226);
+        doc.setTextColor(185, 28, 28);
+      }
+      doc.roundedRect(176, 40, 20, 6, 1, 1, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.text(status, 186, 44.2, { align: 'center' });
+
+      // Divider
+      let y = Math.max(headerBottomY + 6, 52);
+      doc.setDrawColor(229, 231, 235);
+      doc.line(14, y, 196, y);
+      y += 8;
+
+      // Billed To (Left)
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(156, 163, 175);
+      doc.text('BILLED TO', 14, y);
+
+      doc.setFontSize(11);
+      doc.setTextColor(17, 24, 39);
+      doc.text(custName, 14, y + 6);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(75, 85, 99);
+      const custAddrLines = doc.splitTextToSize(custAddress, 85);
+      doc.text(custAddrLines, 14, y + 11);
+
+      let custEndY = y + 11 + (custAddrLines.length * 4);
+      if (custGstin) {
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(55, 65, 81);
+        doc.text(`Customer GSTIN: ${custGstin}`, 14, custEndY + 2);
+        custEndY += 6;
+      }
+
+      // Account Summary Box (Right)
+      doc.setFillColor(249, 250, 251);
+      doc.setDrawColor(243, 244, 246);
+      doc.roundedRect(110, y - 2, 86, 30, 2, 2, 'FD');
+
+      const summaryRows = [
+        ['Account / ID:', accountNo],
+        ['SAC Code:', '998414 (Telecom)'],
+        ['Billing Period:', `${fromD} - ${toD}`],
+        ['Payment Mode:', paymentMode]
+      ];
+
+      let sy = y + 4;
+      summaryRows.forEach(([label, val]) => {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(107, 114, 128);
+        doc.text(label, 114, sy);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(17, 24, 39);
+        doc.text(String(val), 192, sy, { align: 'right' });
+        sy += 6.5;
+      });
+
+      y = Math.max(custEndY + 8, y + 36);
+
+      // Table Header
+      doc.setFillColor(243, 244, 246);
+      doc.rect(14, y, 182, 9, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(75, 85, 99);
+      doc.text('DESCRIPTION', 18, y + 6);
+      doc.text('PLAN DETAILS', 92, y + 6);
+      doc.text('VALIDITY', 138, y + 6);
+      doc.text('TAXABLE VALUE', 192, y + 6, { align: 'right' });
+
+      y += 15;
+
+      // Table Row
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(17, 24, 39);
+      doc.text('High-Speed Broadband Internet Charges', 18, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(156, 163, 175);
+      doc.text('SAC: 998414', 18, y + 4.5);
+
+      doc.setFontSize(9);
+      doc.setTextColor(55, 65, 81);
+      doc.text(`${planSpeed} • ${planData}`, 92, y + 1);
+      doc.text(planCycle, 138, y + 1);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(17, 24, 39);
+      doc.text(`Rs. ${base.toFixed(2)}`, 192, y + 1, { align: 'right' });
+
+      y += 12;
+      doc.setDrawColor(229, 231, 235);
+      doc.line(14, y, 196, y);
+      y += 10;
+
+      // Totals Section
+      const totalsXLabel = 125;
+      const totalsXVal = 192;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(75, 85, 99);
+      doc.text('Sub Total (Base Amount)', totalsXLabel, y);
+      doc.text(`Rs. ${base.toFixed(2)}`, totalsXVal, y, { align: 'right' });
+      y += 7;
+
+      if (gstType === 'intra') {
+        doc.text('CGST (9%)', totalsXLabel, y);
+        doc.text(`Rs. ${halfGst.toFixed(2)}`, totalsXVal, y, { align: 'right' });
+        y += 7;
+
+        doc.text('SGST (9%)', totalsXLabel, y);
+        doc.text(`Rs. ${halfGst.toFixed(2)}`, totalsXVal, y, { align: 'right' });
+        y += 7;
+      } else {
+        doc.text('IGST (18%)', totalsXLabel, y);
+        doc.text(`Rs. ${totalGst.toFixed(2)}`, totalsXVal, y, { align: 'right' });
+        y += 7;
+      }
+
+      doc.line(125, y - 2, 196, y - 2);
+      y += 4;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(17, 24, 39);
+      doc.text('Grand Total (INR)', totalsXLabel, y);
+
+      doc.setTextColor(r, g, b);
+      doc.text(`Rs. ${total.toFixed(2)}`, totalsXVal, y, { align: 'right' });
+
+      // Footer Section
+      const footerY = 260;
+      doc.setDrawColor(229, 231, 235);
+      doc.line(14, footerY, 196, footerY);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(55, 65, 81);
+      doc.text('Terms & Conditions:', 14, footerY + 6);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(107, 114, 128);
+      doc.text('1. All payments are subject to realization.', 14, footerY + 11);
+      doc.text('2. This is a computer-generated invoice and does not require a physical signature.', 14, footerY + 15.5);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(31, 41, 55);
+      doc.text(`For ${ispName}`, 196, footerY + 6, { align: 'right' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(156, 163, 175);
+      doc.text('Authorized Signatory', 196, footerY + 15.5, { align: 'right' });
+
+      // Save PDF directly
+      doc.save(`${invoiceNo}.pdf`);
     }
 
     function resetForm() {
