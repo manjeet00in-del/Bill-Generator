@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Internet & Broadband Bill Generator India | GST Invoice Tool</title>
-  <meta name="description" content="Generate free Indian Internet & Broadband bills with 18% GST auto-split (CGST/SGST), live preview, custom logo upload, and instant PDF download." />
-  
+  <title>Free Internet & Mobile Bill Generator India | GST Invoice Tool</title>
+  <meta name="description" content="Generate free Indian Internet & Mobile Recharge bills with GST split, live preview, custom logo upload, and instant PDF download." />
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- jsPDF for Direct Crisp PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -49,31 +49,46 @@
     </div>
   </header>
 
-  <!-- Hero Title -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
-    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Internet & Broadband Bill Generator</h1>
-    <p class="text-sm sm:text-base text-gray-600 mt-1">Create GST-ready broadband invoices (SAC 998414) with live preview and instant PDF download.</p>
+  <!-- Hero Title & Mode Switcher -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-7 pb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 id="pageTitle" class="text-2xl sm:text-3xl font-bold text-gray-900">Internet & Broadband Bill Generator</h1>
+        <p id="pageSubtitle" class="text-sm sm:text-base text-gray-600 mt-1">Create GST-ready broadband invoices (SAC 998414) with live preview and instant PDF download.</p>
+      </div>
+
+      <!-- Generator Mode Tabs -->
+      <div class="inline-flex bg-white p-1 rounded-xl border border-gray-200 shadow-sm self-start">
+        <button id="tab-internet" onclick="switchMode('internet')" class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white transition">
+          Internet Bill
+        </button>
+        <button id="tab-mobile" onclick="switchMode('mobile')" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-100 transition">
+          Mobile / Recharge Bill
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- Main Workspace -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      
+
       <!-- LEFT COLUMN: INPUT FORM -->
       <div class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6">
-        
-        <!-- Template & Logo -->
+
+        <!-- 1. Provider Selection & Logo -->
         <div>
           <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">1. Provider Template & Logo</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">Select ISP Style</label>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Select Provider *</label>
               <select id="ispPreset" onchange="applyPreset()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <option value="custom">Custom / Local ISP</option>
-                <option value="jio">JioFiber Style</option>
-                <option value="airtel">Airtel Xstream Style</option>
-                <option value="bsnl">BSNL Bharat Fiber Style</option>
-                <option value="act">ACT Fibernet Style</option>
+                <option value="jio">Jio</option>
+                <option value="airtel">Airtel</option>
+                <option value="vi">Vi (Vodafone Idea)</option>
+                <option value="bsnl">BSNL</option>
+                <option value="act">ACT Fibernet</option>
+                <option value="custom">Custom / Local Provider</option>
               </select>
             </div>
             <div>
@@ -85,103 +100,113 @@
 
         <hr class="border-gray-100" />
 
-        <!-- ISP Details -->
+        <!-- 2. Provider Details -->
         <div>
-          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">2. Internet Provider Details</h2>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">2. Provider Details</h2>
           <div class="space-y-3">
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">Provider Name *</label>
-              <input type="text" id="ispName" value="FastNet Broadband Services Pvt. Ltd." oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <input type="text" id="ispName" value="Reliance Jio Infocomm Limited" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Provider Address *</label>
+              <textarea id="ispAddress" rows="2" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">Reliance Corporate IT Park, Thane-Belapur Road, Navi Mumbai, Maharashtra</textarea>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-medium text-gray-700 mb-1">Provider GSTIN</label>
-                <input type="text" id="ispGstin" value="09AABCF1234K1Z5" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase" />
+                <input type="text" id="ispGstin" value="27AAACR5055K1Z7" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase" />
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Invoice Number *</label>
-                <input type="text" id="invoiceNo" value="INV-2026-8492" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                <label class="block text-xs font-medium text-gray-700 mb-1">Choose Date *</label>
+                <input type="date" id="billDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-xs" />
               </div>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">Provider Address *</label>
-              <textarea id="ispAddress" rows="2" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</textarea>
             </div>
           </div>
         </div>
 
         <hr class="border-gray-100" />
 
-        <!-- Customer Details -->
+        <!-- 3. Other / Service Details -->
         <div>
-          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">3. Customer Details</h2>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">3. Service & Billing Period</h2>
           <div class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Customer / Company Name *</label>
-                <input type="text" id="custName" value="Rahul Sharma" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                <label class="block text-xs font-medium text-gray-700 mb-1">Bill Period From Date *</label>
+                <input type="date" id="fromDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-xs" />
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Account / Customer ID *</label>
-                <input type="text" id="accountNo" value="AC-90827163" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">Customer GSTIN (Optional - for B2B)</label>
-              <input type="text" id="custGstin" placeholder="Leave blank for personal connection" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase" />
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-gray-700 mb-1">Installation Address *</label>
-              <textarea id="custAddress" rows="2" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">B-42, Indira Nagar, Lucknow, Uttar Pradesh - 226016</textarea>
-            </div>
-          </div>
-        </div>
-
-        <hr class="border-gray-100" />
-
-        <!-- Billing & Plan Details -->
-        <div>
-          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">4. Plan & Billing Details</h2>
-          <div class="space-y-3">
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Bill Date</label>
-                <input type="date" id="billDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs" />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Period From</label>
-                <input type="date" id="fromDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs" />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Period To</label>
-                <input type="date" id="toDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs" />
+                <label class="block text-xs font-medium text-gray-700 mb-1">Bill Period To Date *</label>
+                <input type="date" id="toDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-xs" />
               </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Time</label>
+                <input type="time" id="billTime" value="17:08" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Service *</label>
+                <select id="serviceType" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <option value="Postpaid" selected>Postpaid</option>
+                  <option value="Prepaid">Prepaid</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Mobile-only fields -->
+            <div id="mobile-extra-fields" class="hidden space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Payment In *</label>
+                  <select id="paymentIn" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="Advance" selected>Advance</option>
+                    <option value="Post-Billing">Post-Billing</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Billing Cycle *</label>
+                  <select id="planCycle" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="Monthly" selected>Monthly</option>
+                    <option value="28 Days">28 Days</option>
+                    <option value="84 Days">84 Days</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Yearly">Yearly</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Mobile No *</label>
+                <input type="text" id="mobileNo" value="+91-9876543210" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              </div>
+            </div>
+
+            <!-- Internet-only plan fields -->
+            <div id="internet-extra-fields" class="grid grid-cols-3 gap-2.5">
               <div>
                 <label class="block text-xs font-medium text-gray-700 mb-1">Speed</label>
-                <select id="planSpeed" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm">
-                  <option value="40 Mbps">40 Mbps</option>
+                <select id="planSpeed" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs">
+                  <option value="50 Mbps">50 Mbps</option>
                   <option value="100 Mbps" selected>100 Mbps</option>
                   <option value="150 Mbps">150 Mbps</option>
                   <option value="300 Mbps">300 Mbps</option>
-                  <option value="500 Mbps">500 Mbps</option>
                   <option value="1 Gbps">1 Gbps</option>
                 </select>
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-700 mb-1">Data Limit</label>
-                <select id="planData" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm">
+                <select id="planData" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs">
                   <option value="Unlimited" selected>Unlimited</option>
                   <option value="3300 GB FUP">3300 GB FUP</option>
-                  <option value="1000 GB FUP">1000 GB FUP</option>
-                  <option value="500 GB FUP">500 GB FUP</option>
+                  <option value="2 GB/Day">2 GB/Day</option>
+                  <option value="1.5 GB/Day">1.5 GB/Day</option>
                 </select>
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Validity</label>
-                <select id="planCycle" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Billing Cycle</label>
+                <select id="inetCycle" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs">
                   <option value="Monthly" selected>Monthly</option>
                   <option value="Quarterly">Quarterly</option>
                   <option value="Half Yearly">Half Yearly</option>
@@ -189,46 +214,128 @@
                 </select>
               </div>
             </div>
+          </div>
+        </div>
 
+        <hr class="border-gray-100" />
+
+        <!-- 4. Customer Details -->
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">4. Customer Details</h2>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Customer Name *</label>
+              <input type="text" id="custName" value="Rajesh Kumar Sharma" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Customer Address *</label>
+              <textarea id="custAddress" rows="2" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">456 Shanti Nagar, Sector 21, Gurgaon, Haryana 122015</textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Landmark</label>
+              <input type="text" id="custLandmark" value="Near Metro Station, Opposite City Mall" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Total Amount (Incl. 18% GST) ₹ *</label>
-                <input type="number" id="totalAmount" value="999" min="1" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" />
+                <label class="block text-xs font-medium text-gray-700 mb-1">Customer ID *</label>
+                <div class="flex gap-1.5">
+                  <input type="text" id="accountNo" value="12345" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                  <button type="button" onclick="randomId('accountNo', 6)" title="Generate ID" class="px-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-xs">↻</button>
+                </div>
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">GST Type</label>
-                <select id="gstType" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                  <option value="intra" selected>CGST 9% + SGST 9%</option>
-                  <option value="inter">IGST 18%</option>
-                </select>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Invoice No *</label>
+                <div class="flex gap-1.5">
+                  <input type="text" id="invoiceNo" value="6789" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                  <button type="button" onclick="randomId('invoiceNo', 6)" title="Generate Invoice No" class="px-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-xs">↻</button>
+                </div>
               </div>
             </div>
-
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Payment Mode</label>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Customer GSTIN (Optional)</label>
+                <input type="text" id="custGstin" placeholder="Optional for B2B" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="custEmail" value="rajesh.sharma@email.com" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-100" />
+
+        <!-- 5. Payment & Charges -->
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">5. Payment & Charges</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Payment Method *</label>
                 <select id="paymentMode" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                  <option value="UPI" selected>UPI</option>
-                  <option value="Credit / Debit Card">Credit / Debit Card</option>
+                  <option value="Card" selected>Card</option>
+                  <option value="UPI">UPI</option>
                   <option value="Net Banking">Net Banking</option>
                   <option value="Cash">Cash</option>
                 </select>
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Payment Status</label>
-                <select id="paymentStatus" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                  <option value="PAID" selected>PAID</option>
-                  <option value="UNPAID">UNPAID</option>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Amount (₹) *</label>
+                <input type="number" id="totalAmount" value="599" min="0" step="0.01" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Prev. Balance</label>
+                <input type="number" id="prevBalance" value="150" min="0" step="0.01" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Adjustment</label>
+                <input type="number" id="adjAmount" value="0" step="0.01" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Late Fee %</label>
+                <input type="number" id="lateFeePct" value="2" min="0" max="100" step="0.1" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Tax % *</label>
+                <input type="number" id="taxPct" value="18" min="0" max="100" step="0.1" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">GST Split</label>
+                <select id="gstType" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <option value="intra" selected>CGST + SGST (Split)</option>
+                  <option value="inter">IGST (Full Tax %)</option>
                 </select>
               </div>
             </div>
           </div>
         </div>
 
+        <hr class="border-gray-100" />
+
+        <!-- 6. File Name & Terms -->
+        <div class="space-y-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600">6. File Details & Terms</h2>
+          <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">File Name *</label>
+            <input type="text" id="fileNameInput" value="Recharge Bill Template 1" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+          </div>
+          <label class="flex items-start gap-2 text-xs text-gray-600 cursor-pointer pt-1">
+            <input type="checkbox" id="termsAccepted" checked class="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+            <span>I have read the terms and conditions and confirm this bill is generated for valid record/documentation purposes.</span>
+          </label>
+        </div>
+
         <!-- Action Buttons -->
         <div class="pt-2 flex gap-3">
           <button onclick="downloadPDF()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition">
-            Download PDF Invoice
+            Download PDF
           </button>
           <button onclick="resetForm()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 px-4 rounded-lg transition">
             Reset
@@ -240,7 +347,7 @@
       <!-- RIGHT COLUMN: LIVE INVOICE PREVIEW -->
       <div class="lg:col-span-7 flex flex-col items-center">
         <div class="w-full max-w-[794px] flex justify-between items-center mb-2 px-1">
-          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Live A4 Invoice Preview</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Live Preview</span>
           <span class="text-xs text-gray-400">Auto-updates as you type</span>
         </div>
 
@@ -248,125 +355,146 @@
           <!-- Top Accent Bar -->
           <div id="preview-accent" class="h-2 w-full bg-blue-600 rounded-t mb-5"></div>
 
-          <!-- Invoice Header -->
+          <!-- Header -->
           <div class="flex justify-between items-start border-b border-gray-200 pb-5 gap-4">
             <div class="flex items-start gap-3.5">
               <div id="preview-logo-box" class="w-14 h-14 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden">
-                <span id="preview-logo-text">FN</span>
-                <img id="preview-logo-img" src="" alt="ISP Logo" class="hidden w-full h-full object-contain bg-white" />
+                <span id="preview-logo-text">Jio</span>
+                <img id="preview-logo-img" src="" alt="Provider Logo" class="hidden w-full h-full object-contain bg-white" />
               </div>
               <div>
-                <h2 id="prev-ispName" class="text-lg sm:text-xl font-bold text-gray-900">FastNet Broadband Services Pvt. Ltd.</h2>
-                <p id="prev-ispAddress" class="text-xs text-gray-500 max-w-xs mt-1 leading-relaxed">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</p>
-                <p id="prev-ispGstin-wrap" class="text-xs font-medium text-gray-700 mt-1">GSTIN: <span id="prev-ispGstin">09AABCF1234K1Z5</span></p>
+                <h2 id="prev-ispName" class="text-lg sm:text-xl font-bold text-gray-900">Reliance Jio Infocomm Limited</h2>
+                <p id="prev-ispAddress" class="text-xs text-gray-500 max-w-xs mt-1 leading-relaxed">Reliance Corporate IT Park, Thane-Belapur Road, Navi Mumbai, Maharashtra</p>
+                <p id="prev-ispGstin-wrap" class="text-xs font-medium text-gray-700 mt-1">GSTIN: <span id="prev-ispGstin">27AAACR5055K1Z7</span></p>
               </div>
             </div>
 
             <div class="text-right shrink-0">
-              <span class="inline-block text-xs font-bold uppercase tracking-widest text-gray-400">Tax Invoice</span>
-              <h3 class="text-base sm:text-lg font-bold text-gray-900 mt-0.5" id="prev-invoiceNo">INV-2026-8492</h3>
-              <p class="text-xs text-gray-500 mt-1">Bill Date: <span id="prev-billDate" class="font-medium text-gray-800"></span></p>
-              <div class="mt-2">
-                <span id="prev-statusBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700">PAID</span>
-              </div>
+              <span id="prev-docType" class="inline-block text-xs font-bold uppercase tracking-widest text-gray-400">Tax Invoice</span>
+              <h3 class="text-base sm:text-lg font-bold text-gray-900 mt-0.5">#<span id="prev-invoiceNo">6789</span></h3>
+              <p class="text-xs text-gray-500 mt-1">Date: <span id="prev-billDate" class="font-medium text-gray-800"></span></p>
+              <p class="text-xs text-gray-500">Time: <span id="prev-billTime" class="font-medium text-gray-800">5:08 PM</span></p>
             </div>
           </div>
 
-          <!-- Billed To & Account Summary -->
+          <!-- Customer & Service Summary -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 py-5 border-b border-gray-200 text-sm">
             <div>
-              <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Billed To</p>
-              <p id="prev-custName" class="font-bold text-gray-900 text-base">Rahul Sharma</p>
-              <p id="prev-custAddress" class="text-xs text-gray-600 mt-1 leading-relaxed">B-42, Indira Nagar, Lucknow, Uttar Pradesh - 226016</p>
-              <p id="prev-custGstin-wrap" class="text-xs font-medium text-gray-700 mt-1.5 hidden">Customer GSTIN: <span id="prev-custGstin"></span></p>
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Customer Details</p>
+              <p id="prev-custName" class="font-bold text-gray-900 text-base">Rajesh Kumar Sharma</p>
+              <p id="prev-custAddress" class="text-xs text-gray-600 mt-1 leading-relaxed">456 Shanti Nagar, Sector 21, Gurgaon, Haryana 122015</p>
+              <p id="prev-custLandmark-wrap" class="text-xs text-gray-500 mt-1">Landmark: <span id="prev-custLandmark">Near Metro Station, Opposite City Mall</span></p>
+              <p id="prev-custEmail-wrap" class="text-xs text-gray-500 mt-0.5">Email: <span id="prev-custEmail">rajesh.sharma@email.com</span></p>
+              <p id="prev-custGstin-wrap" class="text-xs font-medium text-gray-700 mt-1 hidden">Customer GSTIN: <span id="prev-custGstin"></span></p>
             </div>
+
             <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-1.5 text-xs">
               <div class="flex justify-between gap-2">
-                <span class="text-gray-500">Account / Customer ID:</span>
-                <span id="prev-accountNo" class="font-semibold text-gray-900">AC-90827163</span>
+                <span class="text-gray-500">Customer ID:</span>
+                <span id="prev-accountNo" class="font-semibold text-gray-900">12345</span>
+              </div>
+              <div id="prev-mobile-row" class="hidden flex justify-between gap-2">
+                <span class="text-gray-500">Mobile No:</span>
+                <span id="prev-mobileNo" class="font-semibold text-gray-900">+91-9876543210</span>
               </div>
               <div class="flex justify-between gap-2">
-                <span class="text-gray-500">SAC Code:</span>
-                <span class="font-semibold text-gray-900">998414 (Telecom Services)</span>
+                <span class="text-gray-500">Service:</span>
+                <span id="prev-serviceType" class="font-semibold text-gray-900">Postpaid</span>
+              </div>
+              <div id="prev-paymentIn-row" class="hidden flex justify-between gap-2">
+                <span class="text-gray-500">Payment In:</span>
+                <span id="prev-paymentIn" class="font-semibold text-gray-900">Advance</span>
               </div>
               <div class="flex justify-between gap-2">
-                <span class="text-gray-500">Billing Period:</span>
+                <span class="text-gray-500">Billing Cycle:</span>
+                <span id="prev-cycle" class="font-semibold text-gray-900">Monthly</span>
+              </div>
+              <div class="flex justify-between gap-2">
+                <span class="text-gray-500">Bill Period:</span>
                 <span id="prev-period" class="font-semibold text-gray-900"></span>
               </div>
               <div class="flex justify-between gap-2">
-                <span class="text-gray-500">Payment Mode:</span>
-                <span id="prev-paymentMode" class="font-semibold text-gray-900">UPI</span>
+                <span class="text-gray-500">Payment Method:</span>
+                <span id="prev-paymentMode" class="font-semibold text-gray-900">Card</span>
               </div>
             </div>
           </div>
 
-          <!-- Plan Charges Table -->
+          <!-- Charges Table -->
           <div class="mt-5 overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="bg-gray-100 text-gray-600 text-xs uppercase">
-                  <th class="py-2.5 px-3 rounded-l-lg font-semibold">Description</th>
-                  <th class="py-2.5 px-3 font-semibold">Plan Details</th>
-                  <th class="py-2.5 px-3 font-semibold">Validity</th>
-                  <th class="py-2.5 px-3 rounded-r-lg font-semibold text-right">Taxable Value (₹)</th>
+                  <th class="py-2.5 px-3 rounded-l-lg font-semibold">Service / Plan Description</th>
+                  <th class="py-2.5 px-3 font-semibold">SAC Code</th>
+                  <th class="py-2.5 px-3 rounded-r-lg font-semibold text-right">Amount (₹)</th>
                 </tr>
               </thead>
               <tbody class="text-sm divide-y divide-gray-100">
                 <tr>
-                  <td class="py-3.5 px-3 font-medium text-gray-900">
-                    High-Speed Broadband Internet Charges
-                    <span class="block text-xs text-gray-400 font-normal mt-0.5">SAC: 998414</span>
+                  <td class="py-3.5 px-3">
+                    <p id="prev-itemTitle" class="font-semibold text-gray-900">Mobile Telecom & Recharge Charges</p>
+                    <p id="prev-itemSub" class="text-xs text-gray-500 mt-0.5">Postpaid Plan • Monthly Billing</p>
                   </td>
-                  <td class="py-3.5 px-3 text-gray-600">
-                    <span id="prev-planSpeed" class="font-semibold text-gray-800">100 Mbps</span> • <span id="prev-planData">Unlimited</span>
-                  </td>
-                  <td class="py-3.5 px-3 text-gray-600" id="prev-planCycle">Monthly</td>
-                  <td class="py-3.5 px-3 text-right font-semibold text-gray-900" id="prev-baseAmount">₹846.61</td>
+                  <td class="py-3.5 px-3 text-xs text-gray-600">998414</td>
+                  <td class="py-3.5 px-3 text-right font-semibold text-gray-900" id="prev-planAmt">₹599.00</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- Totals & GST Breakdown -->
+          <!-- Totals Breakdown -->
           <div class="mt-5 flex justify-end">
-            <div class="w-full sm:w-72 space-y-2 text-sm">
+            <div class="w-full sm:w-80 space-y-2 text-xs sm:text-sm">
               <div class="flex justify-between text-gray-600">
-                <span>Sub Total (Base Amount)</span>
-                <span id="prev-subTotal">₹846.61</span>
+                <span>Plan / Service Amount</span>
+                <span id="prev-sumPlan">₹599.00</span>
               </div>
-              
-              <div id="intra-gst-rows" class="space-y-2">
+              <div class="flex justify-between text-gray-600">
+                <span>Previous Balance</span>
+                <span id="prev-sumPrev">₹150.00</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>Adjustment Amount</span>
+                <span id="prev-sumAdj">₹0.00</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>Late Fee (<span id="prev-latePctLabel">2</span>%)</span>
+                <span id="prev-sumLate">₹11.98</span>
+              </div>
+
+              <div id="intra-gst-rows" class="space-y-1.5 pt-1 border-t border-gray-100">
                 <div class="flex justify-between text-gray-600">
-                  <span>CGST (9%)</span>
-                  <span id="prev-cgst">₹76.19</span>
+                  <span>CGST (<span id="prev-cgstPct">9</span>%)</span>
+                  <span id="prev-cgst">₹68.49</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
-                  <span>SGST (9%)</span>
-                  <span id="prev-sgst">₹76.19</span>
+                  <span>SGST (<span id="prev-sgstPct">9</span>%)</span>
+                  <span id="prev-sgst">₹68.49</span>
                 </div>
               </div>
 
-              <div id="inter-gst-row" class="hidden flex justify-between text-gray-600">
-                <span>IGST (18%)</span>
-                <span id="prev-igst">₹152.39</span>
+              <div id="inter-gst-row" class="hidden pt-1 border-t border-gray-100 flex justify-between text-gray-600">
+                <span>IGST (<span id="prev-igstPct">18</span>%)</span>
+                <span id="prev-igst">₹136.98</span>
               </div>
 
               <div class="border-t border-gray-200 pt-2.5 flex justify-between font-bold text-base text-gray-900">
-                <span>Grand Total (INR)</span>
-                <span id="prev-grandTotal" class="text-blue-600">₹999.00</span>
+                <span>Total Payable (INR)</span>
+                <span id="prev-grandTotal" class="text-blue-600">₹897.96</span>
               </div>
             </div>
           </div>
 
-          <!-- Footer Declaration -->
+          <!-- Footer -->
           <div class="border-t border-gray-200 pt-4 mt-8 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
             <div>
               <p class="font-semibold text-gray-700">Terms & Conditions:</p>
-              <p class="mt-0.5">1. All payments are subject to realization.</p>
-              <p>2. This is a computer-generated invoice and does not require a physical signature.</p>
+              <p class="mt-0.5">1. Charges are subject to applicable telecom and GST regulations.</p>
+              <p>2. Computer-generated bill summary for record and documentation purposes.</p>
             </div>
             <div class="text-right">
-              <p class="font-semibold text-gray-800" id="prev-signIsp">For FastNet Broadband Services Pvt. Ltd.</p>
+              <p class="font-semibold text-gray-800" id="prev-signIsp">For Reliance Jio Infocomm Limited</p>
               <p class="text-[11px] text-gray-400 mt-3">Authorized Signatory</p>
             </div>
           </div>
@@ -374,52 +502,77 @@
       </div>
 
     </div>
-
-    <!-- SEO & Informational Content Section -->
-    <section class="mt-16 bg-white rounded-xl border border-gray-200 p-6 sm:p-8 space-y-6">
-      <h2 class="text-xl font-bold text-gray-900">About Internet & Broadband GST Invoices in India</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 leading-relaxed">
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-1">18% GST under SAC 998414</h3>
-          <p>Broadband and internet services in India fall under SAC code <strong>998414</strong> (Telecommunications services) and attract <strong>18% GST</strong>. For intra-state connections, this is split equally into <strong>9% CGST + 9% SGST</strong>.</p>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-1">Work-From-Home Reimbursement & Records</h3>
-          <p>Employees claiming work-from-home internet reimbursements or freelancers maintaining expense records can generate formatted broadband bills showing plan speed, billing period, and tax breakdown.</p>
-        </div>
-      </div>
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-800">
-        <strong>Disclaimer:</strong> This tool is intended strictly for educational purposes, personal record-keeping, invoice formatting, and legitimate expense documentation. Do not use generated invoices for fraudulent tax claims or Input Tax Credit (ITC) without a genuine supplier tax invoice reflected in GSTR-2B.
-      </div>
-    </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
-    <p>© 2026 NetBillGen • Built for fast, browser-based invoice formatting.</p>
-  </footer>
-
-  <!-- JavaScript Logic -->
   <script>
-    let currentThemeRGB = [37, 99, 235]; // Default Blue
+    let currentMode = 'internet';
+    let currentThemeRGB = [29, 78, 216];
     let uploadedLogoDataUrl = null;
+    let lastCalculated = {};
 
     window.onload = function () {
       const today = new Date();
-      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
       document.getElementById('billDate').valueAsDate = today;
-      document.getElementById('fromDate').valueAsDate = firstDay;
-      document.getElementById('toDate').valueAsDate = lastDay;
-
+      document.getElementById('fromDate').valueAsDate = today;
+      document.getElementById('toDate').valueAsDate = today;
       updatePreview();
     };
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const tabInet = document.getElementById('tab-internet');
+      const tabMob = document.getElementById('tab-mobile');
+      const mobFields = document.getElementById('mobile-extra-fields');
+      const inetFields = document.getElementById('internet-extra-fields');
+      const mobRow = document.getElementById('prev-mobile-row');
+      const payInRow = document.getElementById('prev-paymentIn-row');
+
+      if (mode === 'mobile') {
+        tabMob.className = 'px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white transition';
+        tabInet.className = 'px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-100 transition';
+        mobFields.classList.remove('hidden');
+        inetFields.classList.add('hidden');
+        mobRow.classList.remove('hidden');
+        payInRow.classList.remove('hidden');
+        document.getElementById('pageTitle').innerText = 'Mobile & Recharge Bill Generator';
+        document.getElementById('pageSubtitle').innerText = 'Create Prepaid or Postpaid mobile & recharge bills with live preview and instant PDF download.';
+        document.getElementById('fileNameInput').value = 'Recharge Bill Template 1';
+      } else {
+        tabInet.className = 'px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white transition';
+        tabMob.className = 'px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-100 transition';
+        mobFields.classList.add('hidden');
+        inetFields.classList.remove('hidden');
+        mobRow.classList.add('hidden');
+        payInRow.classList.add('hidden');
+        document.getElementById('pageTitle').innerText = 'Internet & Broadband Bill Generator';
+        document.getElementById('pageSubtitle').innerText = 'Create GST-ready broadband invoices (SAC 998414) with live preview and instant PDF download.';
+        document.getElementById('fileNameInput').value = 'Internet Bill Template 1';
+      }
+      updatePreview();
+    }
+
+    function randomId(inputId, len) {
+      let num = '';
+      for (let i = 0; i < len; i++) {
+        num += Math.floor(Math.random() * 10);
+      }
+      document.getElementById(inputId).value = num;
+      updatePreview();
+    }
 
     function formatDate(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);
       return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function formatTime12(timeStr) {
+      if (!timeStr) return '';
+      const [hh, mm] = timeStr.split(':');
+      let h = parseInt(hh, 10);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      return `${h}:${mm} ${ampm}`;
     }
 
     function applyPreset() {
@@ -435,36 +588,36 @@
       logoText.classList.remove('hidden');
 
       const presets = {
-        custom: {
-          name: 'FastNet Broadband Services Pvt. Ltd.',
-          gstin: '09AABCF1234K1Z5',
-          addr: '4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010',
-          short: 'FN',
-          bg: 'bg-blue-600',
-          text: 'text-blue-600',
-          rgb: [37, 99, 235]
-        },
         jio: {
-          name: 'Reliance Jio Infocomm Limited (JioFiber)',
-          gstin: '09AAACR5055K1Z2',
-          addr: 'Office - 101, Saffron, Nr. Centre Point, Panchwati 5 Rasta, Ambawadi, Ahmedabad - 380006',
+          name: 'Reliance Jio Infocomm Limited',
+          gstin: '27AAACR5055K1Z7',
+          addr: 'Reliance Corporate IT Park, Thane-Belapur Road, Navi Mumbai, Maharashtra',
           short: 'Jio',
           bg: 'bg-blue-700',
           text: 'text-blue-700',
           rgb: [29, 78, 216]
         },
         airtel: {
-          name: 'Bharti Airtel Limited (Airtel Xstream Fiber)',
-          gstin: '09AAACB2894G1Z9',
+          name: 'Bharti Airtel Limited',
+          gstin: '07AAACB2894G1Z9',
           addr: 'Bharti Crescent, 1, Nelson Mandela Road, Vasant Kunj, Phase II, New Delhi - 110070',
           short: 'airtel',
           bg: 'bg-red-600',
           text: 'text-red-600',
           rgb: [220, 38, 38]
         },
+        vi: {
+          name: 'Vodafone Idea Limited (Vi)',
+          gstin: '27AAACH3512K1Z6',
+          addr: 'Birla Centurion, Pandurang Budhkar Marg, Worli, Mumbai, Maharashtra - 400030',
+          short: 'Vi',
+          bg: 'bg-purple-700',
+          text: 'text-purple-700',
+          rgb: [126, 34, 206]
+        },
         bsnl: {
-          name: 'Bharat Sanchar Nigam Limited (BSNL Bharat Fiber)',
-          gstin: '09AABCB5576G1Z3',
+          name: 'Bharat Sanchar Nigam Limited (BSNL)',
+          gstin: '07AABCB5576G1Z3',
           addr: 'Bharat Sanchar Bhawan, Harish Chandra Mathur Lane, Janpath, New Delhi - 110001',
           short: 'BSNL',
           bg: 'bg-sky-600',
@@ -472,13 +625,22 @@
           rgb: [2, 132, 199]
         },
         act: {
-          name: 'Atria Convergence Technologies Ltd (ACT Fibernet)',
+          name: 'Atria Convergence Technologies Ltd (ACT)',
           gstin: '29AAACA9012D1Z8',
           addr: '2nd & 3rd Floor, Indian Express Building, No. 1, Queens Road, Bengaluru - 560001',
           short: 'ACT',
           bg: 'bg-rose-600',
           text: 'text-rose-600',
           rgb: [225, 29, 72]
+        },
+        custom: {
+          name: 'Metro Telecom & Broadband Services',
+          gstin: '09AABCM1234K1Z5',
+          addr: 'Gomti Nagar, Lucknow, Uttar Pradesh - 226010',
+          short: 'MT',
+          bg: 'bg-slate-800',
+          text: 'text-slate-800',
+          rgb: [30, 41, 59]
         }
       };
 
@@ -511,20 +673,60 @@
     }
 
     function updatePreview() {
-      const ispName = document.getElementById('ispName').value || 'ISP Name';
+      const ispName = document.getElementById('ispName').value || 'Provider Name';
+      const ispAddress = document.getElementById('ispAddress').value || '';
+      const ispGstin = document.getElementById('ispGstin').value.trim();
+
       document.getElementById('prev-ispName').innerText = ispName;
       document.getElementById('prev-signIsp').innerText = 'For ' + ispName;
-      document.getElementById('prev-ispAddress').innerText = document.getElementById('ispAddress').value;
-      
-      const ispGstin = document.getElementById('ispGstin').value.trim();
+      document.getElementById('prev-ispAddress').innerText = ispAddress;
       document.getElementById('prev-ispGstin').innerText = ispGstin;
       document.getElementById('prev-ispGstin-wrap').style.display = ispGstin ? 'block' : 'none';
 
-      document.getElementById('prev-invoiceNo').innerText = document.getElementById('invoiceNo').value;
+      document.getElementById('prev-invoiceNo').innerText = document.getElementById('invoiceNo').value || '0000';
+      document.getElementById('prev-billDate').innerText = formatDate(document.getElementById('billDate').value);
+      document.getElementById('prev-billTime').innerText = formatTime12(document.getElementById('billTime').value);
 
-      document.getElementById('prev-custName').innerText = document.getElementById('custName').value;
-      document.getElementById('prev-accountNo').innerText = document.getElementById('accountNo').value;
-      document.getElementById('prev-custAddress').innerText = document.getElementById('custAddress').value;
+      const fromD = formatDate(document.getElementById('fromDate').value);
+      const toD = formatDate(document.getElementById('toDate').value);
+      document.getElementById('prev-period').innerText = `${fromD} - ${toD}`;
+
+      const serviceType = document.getElementById('serviceType').value;
+      document.getElementById('prev-serviceType').innerText = serviceType;
+
+      const paymentIn = document.getElementById('paymentIn').value;
+      document.getElementById('prev-paymentIn').innerText = paymentIn;
+
+      const mobileNo = document.getElementById('mobileNo').value;
+      document.getElementById('prev-mobileNo').innerText = mobileNo;
+
+      const cycle = currentMode === 'mobile'
+        ? document.getElementById('planCycle').value
+        : document.getElementById('inetCycle').value;
+      document.getElementById('prev-cycle').innerText = cycle;
+
+      if (currentMode === 'mobile') {
+        document.getElementById('prev-itemTitle').innerText = `Mobile ${serviceType} & Recharge Bill (${mobileNo})`;
+        document.getElementById('prev-itemSub').innerText = `Payment In: ${paymentIn} • Cycle: ${cycle}`;
+      } else {
+        const speed = document.getElementById('planSpeed').value;
+        const data = document.getElementById('planData').value;
+        document.getElementById('prev-itemTitle').innerText = `Broadband Internet Plan (${speed} • ${data})`;
+        document.getElementById('prev-itemSub').innerText = `${serviceType} • Billing Cycle: ${cycle}`;
+      }
+
+      document.getElementById('prev-custName').innerText = document.getElementById('custName').value || 'Customer';
+      document.getElementById('prev-custAddress').innerText = document.getElementById('custAddress').value || '';
+      document.getElementById('prev-accountNo').innerText = document.getElementById('accountNo').value || '';
+      document.getElementById('prev-paymentMode').innerText = document.getElementById('paymentMode').value;
+
+      const landmark = document.getElementById('custLandmark').value.trim();
+      document.getElementById('prev-custLandmark').innerText = landmark;
+      document.getElementById('prev-custLandmark-wrap').style.display = landmark ? 'block' : 'none';
+
+      const email = document.getElementById('custEmail').value.trim();
+      document.getElementById('prev-custEmail').innerText = email;
+      document.getElementById('prev-custEmail-wrap').style.display = email ? 'block' : 'none';
 
       const custGstin = document.getElementById('custGstin').value.trim();
       const custGstinWrap = document.getElementById('prev-custGstin-wrap');
@@ -535,34 +737,36 @@
         custGstinWrap.classList.add('hidden');
       }
 
-      document.getElementById('prev-billDate').innerText = formatDate(document.getElementById('billDate').value);
-      const fromD = formatDate(document.getElementById('fromDate').value);
-      const toD = formatDate(document.getElementById('toDate').value);
-      document.getElementById('prev-period').innerText = `${fromD} to ${toD}`;
+      // Amount & Tax Calculations
+      const planAmt = parseFloat(document.getElementById('totalAmount').value) || 0;
+      const prevBal = parseFloat(document.getElementById('prevBalance').value) || 0;
+      const adjAmt = parseFloat(document.getElementById('adjAmount').value) || 0;
+      const latePct = parseFloat(document.getElementById('lateFeePct').value) || 0;
+      const taxPct = parseFloat(document.getElementById('taxPct').value) || 0;
 
-      document.getElementById('prev-planSpeed').innerText = document.getElementById('planSpeed').value;
-      document.getElementById('prev-planData').innerText = document.getElementById('planData').value;
-      document.getElementById('prev-planCycle').innerText = document.getElementById('planCycle').value;
-      document.getElementById('prev-paymentMode').innerText = document.getElementById('paymentMode').value;
+      const lateFee = (planAmt * latePct) / 100;
+      const taxableSum = Math.max(0, planAmt + prevBal + adjAmt + lateFee);
+      const totalTax = (taxableSum * taxPct) / 100;
+      const halfTax = totalTax / 2;
+      const grandTotal = taxableSum + totalTax;
 
-      const status = document.getElementById('paymentStatus').value;
-      const badge = document.getElementById('prev-statusBadge');
-      badge.innerText = status;
-      badge.className = status === 'PAID'
-        ? 'inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700'
-        : 'inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-red-100 text-red-700';
+      lastCalculated = { planAmt, prevBal, adjAmt, latePct, lateFee, taxPct, totalTax, halfTax, grandTotal };
 
-      const total = parseFloat(document.getElementById('totalAmount').value) || 0;
-      const base = total / 1.18;
-      const totalGst = total - base;
-      const halfGst = totalGst / 2;
+      document.getElementById('prev-planAmt').innerText = '₹' + planAmt.toFixed(2);
+      document.getElementById('prev-sumPlan').innerText = '₹' + planAmt.toFixed(2);
+      document.getElementById('prev-sumPrev').innerText = '₹' + prevBal.toFixed(2);
+      document.getElementById('prev-sumAdj').innerText = '₹' + adjAmt.toFixed(2);
+      document.getElementById('prev-latePctLabel').innerText = latePct;
+      document.getElementById('prev-sumLate').innerText = '₹' + lateFee.toFixed(2);
 
-      document.getElementById('prev-baseAmount').innerText = '₹' + base.toFixed(2);
-      document.getElementById('prev-subTotal').innerText = '₹' + base.toFixed(2);
-      document.getElementById('prev-cgst').innerText = '₹' + halfGst.toFixed(2);
-      document.getElementById('prev-sgst').innerText = '₹' + halfGst.toFixed(2);
-      document.getElementById('prev-igst').innerText = '₹' + totalGst.toFixed(2);
-      document.getElementById('prev-grandTotal').innerText = '₹' + total.toFixed(2);
+      const halfPct = (taxPct / 2).toFixed(1).replace(/\.0$/, '');
+      document.getElementById('prev-cgstPct').innerText = halfPct;
+      document.getElementById('prev-sgstPct').innerText = halfPct;
+      document.getElementById('prev-igstPct').innerText = taxPct;
+      document.getElementById('prev-cgst').innerText = '₹' + halfTax.toFixed(2);
+      document.getElementById('prev-sgst').innerText = '₹' + halfTax.toFixed(2);
+      document.getElementById('prev-igst').innerText = '₹' + totalTax.toFixed(2);
+      document.getElementById('prev-grandTotal').innerText = '₹' + grandTotal.toFixed(2);
 
       const gstType = document.getElementById('gstType').value;
       if (gstType === 'intra') {
@@ -575,41 +779,47 @@
     }
 
     function downloadPDF() {
+      if (!document.getElementById('termsAccepted').checked) {
+        alert('Please accept the terms and conditions before downloading.');
+        return;
+      }
+
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('p', 'mm', 'a4');
       const [r, g, b] = currentThemeRGB;
 
-      // Gather values
-      const ispName = document.getElementById('ispName').value || 'ISP Name';
+      const ispName = document.getElementById('ispName').value || 'Provider Name';
       const ispAddress = document.getElementById('ispAddress').value || '';
       const ispGstin = document.getElementById('ispGstin').value.trim();
-      const invoiceNo = document.getElementById('invoiceNo').value || 'INV-001';
+      const invoiceNo = document.getElementById('invoiceNo').value || '0000';
       const billDate = formatDate(document.getElementById('billDate').value);
+      const billTime = formatTime12(document.getElementById('billTime').value);
       const fromD = formatDate(document.getElementById('fromDate').value);
       const toD = formatDate(document.getElementById('toDate').value);
-      const status = document.getElementById('paymentStatus').value;
 
       const custName = document.getElementById('custName').value || 'Customer';
       const custAddress = document.getElementById('custAddress').value || '';
+      const landmark = document.getElementById('custLandmark').value.trim();
+      const email = document.getElementById('custEmail').value.trim();
       const custGstin = document.getElementById('custGstin').value.trim();
       const accountNo = document.getElementById('accountNo').value || '';
-      const paymentMode = document.getElementById('paymentMode').value || '';
-
-      const planSpeed = document.getElementById('planSpeed').value;
-      const planData = document.getElementById('planData').value;
-      const planCycle = document.getElementById('planCycle').value;
+      const mobileNo = document.getElementById('mobileNo').value || '';
+      const serviceType = document.getElementById('serviceType').value;
+      const paymentIn = document.getElementById('paymentIn').value;
+      const paymentMode = document.getElementById('paymentMode').value;
       const gstType = document.getElementById('gstType').value;
 
-      const total = parseFloat(document.getElementById('totalAmount').value) || 0;
-      const base = total / 1.18;
-      const totalGst = total - base;
-      const halfGst = totalGst / 2;
+      const cycle = currentMode === 'mobile'
+        ? document.getElementById('planCycle').value
+        : document.getElementById('inetCycle').value;
 
-      // Top Accent Bar
+      const c = lastCalculated;
+
+      // Top bar
       doc.setFillColor(r, g, b);
       doc.rect(14, 14, 182, 3, 'F');
 
-      // Logo Box or Uploaded Image
+      // Logo
       let textStartX = 14;
       if (uploadedLogoDataUrl) {
         try {
@@ -629,7 +839,6 @@
         textStartX = 34;
       }
 
-      // ISP Header Info
       doc.setTextColor(17, 24, 39);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(13);
@@ -641,7 +850,7 @@
       const ispAddrLines = doc.splitTextToSize(ispAddress, 95);
       doc.text(ispAddrLines, textStartX, 32);
 
-      let headerBottomY = 32 + (ispAddrLines.length * 4);
+      let headerBottomY = 32 + ispAddrLines.length * 4;
       if (ispGstin) {
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(55, 65, 81);
@@ -649,45 +858,31 @@
         headerBottomY += 5;
       }
 
-      // Right Side: Tax Invoice Title
+      // Right Header
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(156, 163, 175);
-      doc.text('TAX INVOICE', 196, 26, { align: 'right' });
+      doc.text(currentMode === 'mobile' ? 'MOBILE / RECHARGE BILL' : 'TAX INVOICE', 196, 26, { align: 'right' });
 
       doc.setFontSize(12);
       doc.setTextColor(17, 24, 39);
-      doc.text(invoiceNo, 196, 32, { align: 'right' });
+      doc.text(`#${invoiceNo}`, 196, 32, { align: 'right' });
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor(107, 114, 128);
-      doc.text(`Bill Date: ${billDate}`, 196, 37, { align: 'right' });
+      doc.text(`Date: ${billDate} | ${billTime}`, 196, 37, { align: 'right' });
 
-      // Status Badge
-      if (status === 'PAID') {
-        doc.setFillColor(220, 252, 231);
-        doc.setTextColor(21, 128, 61);
-      } else {
-        doc.setFillColor(254, 226, 226);
-        doc.setTextColor(185, 28, 28);
-      }
-      doc.roundedRect(176, 40, 20, 6, 1, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.text(status, 186, 44.2, { align: 'center' });
-
-      // Divider
-      let y = Math.max(headerBottomY + 6, 52);
+      let y = Math.max(headerBottomY + 6, 48);
       doc.setDrawColor(229, 231, 235);
       doc.line(14, y, 196, y);
       y += 8;
 
-      // Billed To (Left)
+      // Customer Details
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(156, 163, 175);
-      doc.text('BILLED TO', 14, y);
+      doc.text('CUSTOMER DETAILS', 14, y);
 
       doc.setFontSize(11);
       doc.setTextColor(17, 24, 39);
@@ -699,28 +894,39 @@
       const custAddrLines = doc.splitTextToSize(custAddress, 85);
       doc.text(custAddrLines, 14, y + 11);
 
-      let custEndY = y + 11 + (custAddrLines.length * 4);
+      let custEndY = y + 11 + custAddrLines.length * 4;
+      if (landmark) {
+        doc.text(`Landmark: ${landmark}`, 14, custEndY + 1);
+        custEndY += 4.5;
+      }
+      if (email) {
+        doc.text(`Email: ${email}`, 14, custEndY + 1);
+        custEndY += 4.5;
+      }
       if (custGstin) {
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(55, 65, 81);
-        doc.text(`Customer GSTIN: ${custGstin}`, 14, custEndY + 2);
-        custEndY += 6;
+        doc.text(`GSTIN: ${custGstin}`, 14, custEndY + 1.5);
+        custEndY += 5;
       }
 
-      // Account Summary Box (Right)
-      doc.setFillColor(249, 250, 251);
-      doc.setDrawColor(243, 244, 246);
-      doc.roundedRect(110, y - 2, 86, 30, 2, 2, 'FD');
-
-      const summaryRows = [
-        ['Account / ID:', accountNo],
-        ['SAC Code:', '998414 (Telecom)'],
-        ['Billing Period:', `${fromD} - ${toD}`],
-        ['Payment Mode:', paymentMode]
+      // Summary Box
+      const rows = [
+        ['Customer ID:', accountNo],
+        ...(currentMode === 'mobile' ? [['Mobile No:', mobileNo]] : []),
+        ['Service:', serviceType],
+        ...(currentMode === 'mobile' ? [['Payment In:', paymentIn]] : []),
+        ['Billing Cycle:', cycle],
+        ['Bill Period:', `${fromD} - ${toD}`],
+        ['Payment:', paymentMode]
       ];
 
-      let sy = y + 4;
-      summaryRows.forEach(([label, val]) => {
+      const boxHeight = rows.length * 5.2 + 5;
+      doc.setFillColor(249, 250, 251);
+      doc.setDrawColor(243, 244, 246);
+      doc.roundedRect(110, y - 2, 86, boxHeight, 2, 2, 'FD');
+
+      let sy = y + 3.5;
+      rows.forEach(([label, val]) => {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
         doc.setTextColor(107, 114, 128);
@@ -729,10 +935,10 @@
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(17, 24, 39);
         doc.text(String(val), 192, sy, { align: 'right' });
-        sy += 6.5;
+        sy += 5.2;
       });
 
-      y = Math.max(custEndY + 8, y + 36);
+      y = Math.max(custEndY + 8, y + boxHeight + 6);
 
       // Table Header
       doc.setFillColor(243, 244, 246);
@@ -741,108 +947,110 @@
       doc.setFontSize(8);
       doc.setTextColor(75, 85, 99);
       doc.text('DESCRIPTION', 18, y + 6);
-      doc.text('PLAN DETAILS', 92, y + 6);
-      doc.text('VALIDITY', 138, y + 6);
-      doc.text('TAXABLE VALUE', 192, y + 6, { align: 'right' });
-
+      doc.text('SAC', 136, y + 6);
+      doc.text('AMOUNT', 192, y + 6, { align: 'right' });
       y += 15;
 
-      // Table Row
+      const desc = currentMode === 'mobile'
+        ? `Mobile ${serviceType} & Recharge Charges (${mobileNo})`
+        : `Broadband Internet Plan (${document.getElementById('planSpeed').value} • ${document.getElementById('planData').value})`;
+
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9.5);
       doc.setTextColor(17, 24, 39);
-      doc.text('High-Speed Broadband Internet Charges', 18, y);
+      doc.text(desc, 18, y);
 
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(156, 163, 175);
-      doc.text('SAC: 998414', 18, y + 4.5);
-
       doc.setFontSize(9);
-      doc.setTextColor(55, 65, 81);
-      doc.text(`${planSpeed} • ${planData}`, 92, y + 1);
-      doc.text(planCycle, 138, y + 1);
+      doc.text('998414', 136, y);
 
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(17, 24, 39);
-      doc.text(`Rs. ${base.toFixed(2)}`, 192, y + 1, { align: 'right' });
+      doc.text(`Rs. ${c.planAmt.toFixed(2)}`, 192, y, { align: 'right' });
 
-      y += 12;
+      y += 10;
       doc.setDrawColor(229, 231, 235);
       doc.line(14, y, 196, y);
-      y += 10;
+      y += 8;
 
-      // Totals Section
-      const totalsXLabel = 125;
-      const totalsXVal = 192;
-
+      // Breakdown
+      const lx = 122;
+      const vx = 192;
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
+      doc.setFontSize(8.5);
       doc.setTextColor(75, 85, 99);
-      doc.text('Sub Total (Base Amount)', totalsXLabel, y);
-      doc.text(`Rs. ${base.toFixed(2)}`, totalsXVal, y, { align: 'right' });
-      y += 7;
+
+      const summaryLines = [
+        ['Plan / Service Amount', `Rs. ${c.planAmt.toFixed(2)}`],
+        ['Previous Balance', `Rs. ${c.prevBal.toFixed(2)}`],
+        ['Adjustment Amount', `Rs. ${c.adjAmt.toFixed(2)}`],
+        [`Late Fee (${c.latePct}%)`, `Rs. ${c.lateFee.toFixed(2)}`]
+      ];
+
+      summaryLines.forEach(([k, v]) => {
+        doc.text(k, lx, y);
+        doc.text(v, vx, y, { align: 'right' });
+        y += 6;
+      });
 
       if (gstType === 'intra') {
-        doc.text('CGST (9%)', totalsXLabel, y);
-        doc.text(`Rs. ${halfGst.toFixed(2)}`, totalsXVal, y, { align: 'right' });
-        y += 7;
-
-        doc.text('SGST (9%)', totalsXLabel, y);
-        doc.text(`Rs. ${halfGst.toFixed(2)}`, totalsXVal, y, { align: 'right' });
-        y += 7;
+        const halfPct = (c.taxPct / 2).toFixed(1).replace(/\.0$/, '');
+        doc.text(`CGST (${halfPct}%)`, lx, y);
+        doc.text(`Rs. ${c.halfTax.toFixed(2)}`, vx, y, { align: 'right' });
+        y += 6;
+        doc.text(`SGST (${halfPct}%)`, lx, y);
+        doc.text(`Rs. ${c.halfTax.toFixed(2)}`, vx, y, { align: 'right' });
+        y += 6;
       } else {
-        doc.text('IGST (18%)', totalsXLabel, y);
-        doc.text(`Rs. ${totalGst.toFixed(2)}`, totalsXVal, y, { align: 'right' });
-        y += 7;
+        doc.text(`IGST (${c.taxPct}%)`, lx, y);
+        doc.text(`Rs. ${c.totalTax.toFixed(2)}`, vx, y, { align: 'right' });
+        y += 6;
       }
 
-      doc.line(125, y - 2, 196, y - 2);
-      y += 4;
+      doc.line(lx, y - 2, vx, y - 2);
+      y += 3.5;
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
       doc.setTextColor(17, 24, 39);
-      doc.text('Grand Total (INR)', totalsXLabel, y);
-
+      doc.text('Total Payable', lx, y);
       doc.setTextColor(r, g, b);
-      doc.text(`Rs. ${total.toFixed(2)}`, totalsXVal, y, { align: 'right' });
+      doc.text(`Rs. ${c.grandTotal.toFixed(2)}`, vx, y, { align: 'right' });
 
-      // Footer Section
-      const footerY = 260;
+      // Footer
+      const footerY = 262;
       doc.setDrawColor(229, 231, 235);
       doc.line(14, footerY, 196, footerY);
 
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(55, 65, 81);
-      doc.text('Terms & Conditions:', 14, footerY + 6);
+      doc.text('Terms & Conditions:', 14, footerY + 5.5);
 
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(107, 114, 128);
-      doc.text('1. All payments are subject to realization.', 14, footerY + 11);
-      doc.text('2. This is a computer-generated invoice and does not require a physical signature.', 14, footerY + 15.5);
+      doc.text('1. Charges are subject to applicable telecom and GST regulations.', 14, footerY + 10);
+      doc.text('2. Computer-generated bill summary for record and documentation purposes.', 14, footerY + 14.5);
 
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(31, 41, 55);
-      doc.text(`For ${ispName}`, 196, footerY + 6, { align: 'right' });
+      doc.text(`For ${ispName}`, 196, footerY + 5.5, { align: 'right' });
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7.5);
       doc.setTextColor(156, 163, 175);
-      doc.text('Authorized Signatory', 196, footerY + 15.5, { align: 'right' });
+      doc.text('Authorized Signatory', 196, footerY + 14.5, { align: 'right' });
 
-      // Save PDF directly
-      doc.save(`${invoiceNo}.pdf`);
+      const cleanFileName = (document.getElementById('fileNameInput').value || 'Bill').trim().replace(/\.pdf$/i, '');
+      doc.save(`${cleanFileName}.pdf`);
     }
 
     function resetForm() {
-      document.getElementById('ispPreset').value = 'custom';
+      document.getElementById('ispPreset').value = 'jio';
       applyPreset();
-      document.getElementById('custName').value = '';
-      document.getElementById('custGstin').value = '';
-      document.getElementById('custAddress').value = '';
-      document.getElementById('totalAmount').value = '999';
+      document.getElementById('prevBalance').value = '0';
+      document.getElementById('adjAmount').value = '0';
+      document.getElementById('lateFeePct').value = '0';
+      document.getElementById('taxPct').value = '18';
       updatePreview();
     }
   </script>
