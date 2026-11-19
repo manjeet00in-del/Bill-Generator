@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Internet & Broadband Bill Generator India | GST Invoice Tool</title>
+  <meta name="description" content="Generate free Indian Internet & Broadband bills with 18% GST auto-split (CGST/SGST), live preview, custom logo upload, and instant PDF download." />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- html2pdf.js for Instant PDF Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+    /* Invoice A4 Styling */
+    #invoice-preview {
+      width: 100%;
+      max-width: 794px;
+      min-height: 950px;
+      background: #ffffff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+  </style>
+</head>
+<body class="text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+          IB
+        </div>
+        <span class="font-bold text-xl tracking-tight text-gray-900">NetBill<span class="text-blue-600">Gen</span></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-block text-xs bg-green-100 text-green-800 font-medium px-2.5 py-1 rounded-full">
+          100% Free • No Watermark
+        </span>
+        <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Download PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Title -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Internet & Broadband Bill Generator</h1>
+    <p class="text-sm sm:text-base text-gray-600 mt-1">Create GST-ready broadband invoices (SAC 998414) with live preview and instant PDF download.</p>
+  </section>
+
+  <!-- Main Workspace: Split Screen -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT COLUMN: INPUT FORM (5 Cols) -->
+      <div class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-6">
+        
+        <!-- Template & Logo -->
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">1. Provider Template & Logo</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Select ISP Style</label>
+              <select id="ispPreset" onchange="applyPreset()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <option value="custom">Custom / Local ISP</option>
+                <option value="jio">JioFiber Style</option>
+                <option value="airtel">Airtel Xstream Style</option>
+                <option value="bsnl">BSNL Bharat Fiber Style</option>
+                <option value="act">ACT Fibernet Style</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Upload Logo (Optional)</label>
+              <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-100" />
+
+        <!-- ISP Details -->
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">2. Internet Provider Details</h2>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Provider Name *</label>
+              <input type="text" id="ispName" value="FastNet Broadband Services Pvt. Ltd." oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Provider GSTIN</label>
+                <input type="text" id="ispGstin" value="09AABCF1234K1Z5" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Invoice Number *</label>
+                <input type="text" id="invoiceNo" value="INV-2026-8492" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Provider Address *</label>
+              <textarea id="ispAddress" rows="2" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</textarea>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-100" />
+
+        <!-- Customer Details -->
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">3. Customer Details</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Customer / Company Name *</label>
+                <input type="text" id="custName" value="Rahul Sharma" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Account / Customer ID *</label>
+                <input type="text" id="accountNo" value="AC-90827163" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Customer GSTIN (Optional - for B2B)</label>
+              <input type="text" id="custGstin" placeholder="Leave blank for personal connection" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm uppercase" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1">Installation Address *</label>
+              <textarea id="custAddress" rows="2" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">B-42, Indira Nagar, Lucknow, Uttar Pradesh - 226016</textarea>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-100" />
+
+        <!-- Billing & Plan Details -->
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-blue-600 mb-3">4. Plan & Billing Details</h2>
+          <div class="space-y-3">
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Bill Date</label>
+                <input type="date" id="billDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Period From</label>
+                <input type="date" id="fromDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Period To</label>
+                <input type="date" id="toDate" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-xs" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Speed</label>
+                <select id="planSpeed" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm">
+                  <option value="40 Mbps">40 Mbps</option>
+                  <option value="100 Mbps" selected>100 Mbps</option>
+                  <option value="150 Mbps">150 Mbps</option>
+                  <option value="300 Mbps">300 Mbps</option>
+                  <option value="500 Mbps">500 Mbps</option>
+                  <option value="1 Gbps">1 Gbps</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Data Limit</label>
+                <select id="planData" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm">
+                  <option value="Unlimited" selected>Unlimited</option>
+                  <option value="3300 GB FUP">3300 GB FUP</option>
+                  <option value="1000 GB FUP">1000 GB FUP</option>
+                  <option value="500 GB FUP">500 GB FUP</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Validity</label>
+                <select id="planCycle" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-2.5 py-2 text-sm">
+                  <option value="Monthly" selected>Monthly</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="Half Yearly">Half Yearly</option>
+                  <option value="Yearly">Yearly</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Total Amount (Incl. 18% GST) ₹ *</label>
+                <input type="number" id="totalAmount" value="999" min="1" oninput="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-semibold" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">GST Type</label>
+                <select id="gstType" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <option value="intra" selected>CGST 9% + SGST 9%</option>
+                  <option value="inter">IGST 18%</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Payment Mode</label>
+                <select id="paymentMode" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <option value="UPI" selected>UPI</option>
+                  <option value="Credit / Debit Card">Credit / Debit Card</option>
+                  <option value="Net Banking">Net Banking</option>
+                  <option value="Cash">Cash</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Payment Status</label>
+                <select id="paymentStatus" onchange="updatePreview()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <option value="PAID" selected>PAID</option>
+                  <option value="UNPAID">UNPAID</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 flex gap-3">
+          <button onclick="downloadPDF()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition">
+            Download PDF Invoice
+          </button>
+          <button onclick="resetForm()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 px-4 rounded-lg transition">
+            Reset
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: LIVE INVOICE PREVIEW (7 Cols) -->
+      <div class="lg:col-span-7 flex flex-col items-center">
+        <div class="w-full max-w-[794px] flex justify-between items-center mb-2 px-1">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Live A4 Invoice Preview</span>
+          <span class="text-xs text-gray-400">Auto-updates as you type</span>
+        </div>
+
+        <!-- Printable Invoice Sheet -->
+        <div id="invoice-preview" class="rounded-lg border border-gray-200 p-8 sm:p-10 text-gray-800 flex flex-col justify-between">
+          <div>
+            <!-- Top Accent Bar -->
+            <div id="preview-accent" class="h-2 w-full bg-blue-600 rounded-t mb-6"></div>
+
+            <!-- Invoice Header -->
+            <div class="flex justify-between items-start border-b border-gray-200 pb-6">
+              <div class="flex items-start gap-4">
+                <div id="preview-logo-box" class="w-14 h-14 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xl shrink-0 overflow-hidden">
+                  <span id="preview-logo-text">FN</span>
+                  <img id="preview-logo-img" src="" alt="ISP Logo" class="hidden w-full h-full object-contain bg-white" />
+                </div>
+                <div>
+                  <h2 id="prev-ispName" class="text-xl font-bold text-gray-900">FastNet Broadband Services Pvt. Ltd.</h2>
+                  <p id="prev-ispAddress" class="text-xs text-gray-500 max-w-xs mt-1 leading-relaxed">4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010</p>
+                  <p id="prev-ispGstin-wrap" class="text-xs font-medium text-gray-700 mt-1">GSTIN: <span id="prev-ispGstin">09AABCF1234K1Z5</span></p>
+                </div>
+              </div>
+
+              <div class="text-right">
+                <span class="inline-block text-xs font-bold uppercase tracking-widest text-gray-400">Tax Invoice</span>
+                <h3 class="text-lg font-bold text-gray-900 mt-0.5" id="prev-invoiceNo">INV-2026-8492</h3>
+                <p class="text-xs text-gray-500 mt-1">Bill Date: <span id="prev-billDate" class="font-medium text-gray-800"></span></p>
+                <div class="mt-2">
+                  <span id="prev-statusBadge" class="inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700">PAID</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Billed To & Account Summary -->
+            <div class="grid grid-cols-2 gap-6 py-6 border-b border-gray-200 text-sm">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Billed To</p>
+                <p id="prev-custName" class="font-bold text-gray-900 text-base">Rahul Sharma</p>
+                <p id="prev-custAddress" class="text-xs text-gray-600 mt-1 leading-relaxed">B-42, Indira Nagar, Lucknow, Uttar Pradesh - 226016</p>
+                <p id="prev-custGstin-wrap" class="text-xs font-medium text-gray-700 mt-1.5 hidden">Customer GSTIN: <span id="prev-custGstin"></span></p>
+              </div>
+              <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-1.5 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Account / Customer ID:</span>
+                  <span id="prev-accountNo" class="font-semibold text-gray-900">AC-90827163</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">SAC Code:</span>
+                  <span class="font-semibold text-gray-900">998414 (Telecom Services)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Billing Period:</span>
+                  <span id="prev-period" class="font-semibold text-gray-900"></span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Payment Mode:</span>
+                  <span id="prev-paymentMode" class="font-semibold text-gray-900">UPI</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Plan Charges Table -->
+            <div class="mt-6">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-gray-100 text-gray-600 text-xs uppercase">
+                    <th class="py-3 px-4 rounded-l-lg font-semibold">Description</th>
+                    <th class="py-3 px-4 font-semibold">Plan Details</th>
+                    <th class="py-3 px-4 font-semibold">Validity</th>
+                    <th class="py-3 px-4 rounded-r-lg font-semibold text-right">Taxable Value (₹)</th>
+                  </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-gray-100">
+                  <tr>
+                    <td class="py-4 px-4 font-medium text-gray-900">
+                      High-Speed Broadband Internet Charges
+                      <span class="block text-xs text-gray-400 font-normal mt-0.5">SAC: 998414</span>
+                    </td>
+                    <td class="py-4 px-4 text-gray-600">
+                      <span id="prev-planSpeed" class="font-semibold text-gray-800">100 Mbps</span> • <span id="prev-planData">Unlimited</span>
+                    </td>
+                    <td class="py-4 px-4 text-gray-600" id="prev-planCycle">Monthly</td>
+                    <td class="py-4 px-4 text-right font-semibold text-gray-900" id="prev-baseAmount">₹846.61</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Totals & GST Breakdown -->
+            <div class="mt-6 flex justify-end">
+              <div class="w-full sm:w-72 space-y-2 text-sm">
+                <div class="flex justify-between text-gray-600">
+                  <span>Sub Total (Base Amount)</span>
+                  <span id="prev-subTotal">₹846.61</span>
+                </div>
+                
+                <div id="intra-gst-rows" class="space-y-2">
+                  <div class="flex justify-between text-gray-600">
+                    <span>CGST (9%)</span>
+                    <span id="prev-cgst">₹76.19</span>
+                  </div>
+                  <div class="flex justify-between text-gray-600">
+                    <span>SGST (9%)</span>
+                    <span id="prev-sgst">₹76.19</span>
+                  </div>
+                </div>
+
+                <div id="inter-gst-row" class="hidden flex justify-between text-gray-600">
+                  <span>IGST (18%)</span>
+                  <span id="prev-igst">₹152.39</span>
+                </div>
+
+                <div class="border-t border-gray-200 pt-2.5 flex justify-between font-bold text-base text-gray-900">
+                  <span>Grand Total (INR)</span>
+                  <span id="prev-grandTotal" class="text-blue-600">₹999.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Declaration -->
+          <div class="border-t border-gray-200 pt-5 mt-10 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+            <div>
+              <p class="font-semibold text-gray-700">Terms & Conditions:</p>
+              <p class="mt-0.5">1. All payments are subject to realization.</p>
+              <p>2. This is a computer-generated invoice and does not require a physical signature.</p>
+            </div>
+            <div class="text-right">
+              <p class="font-semibold text-gray-800" id="prev-signIsp">For FastNet Broadband Services Pvt. Ltd.</p>
+              <p class="text-[11px] text-gray-400 mt-3">Authorized Signatory</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEO & Informational Content Section -->
+    <section class="mt-16 bg-white rounded-xl border border-gray-200 p-6 sm:p-8 space-y-6">
+      <h2 class="text-xl font-bold text-gray-900">About Internet & Broadband GST Invoices in India</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600 leading-relaxed">
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-1">18% GST under SAC 998414</h3>
+          <p>Broadband and internet services in India fall under SAC code <strong>998414</strong> (Telecommunications services) and attract <strong>18% GST</strong>. For intra-state connections, this is split equally into <strong>9% CGST + 9% SGST</strong>.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-1">Work-From-Home Reimbursement & Records</h3>
+          <p>Employees claiming work-from-home internet reimbursements or freelancers maintaining expense records can generate formatted broadband bills showing plan speed, billing period, and tax breakdown.</p>
+        </div>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-800">
+        <strong>Disclaimer:</strong> This tool is intended strictly for educational purposes, personal record-keeping, invoice formatting, and legitimate expense documentation. Do not use generated invoices for fraudulent tax claims or Input Tax Credit (ITC) without a genuine supplier tax invoice reflected in GSTR-2B.
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
+    <p>© 2026 NetBillGen • Built for fast, browser-based invoice formatting.</p>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Set default dates on load
+    window.onload = function () {
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+      document.getElementById('billDate').valueAsDate = today;
+      document.getElementById('fromDate').valueAsDate = firstDay;
+      document.getElementById('toDate').valueAsDate = lastDay;
+
+      updatePreview();
+    };
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function applyPreset() {
+      const preset = document.getElementById('ispPreset').value;
+      const accent = document.getElementById('preview-accent');
+      const logoBox = document.getElementById('preview-logo-box');
+      const logoText = document.getElementById('preview-logo-text');
+      const grandTotal = document.getElementById('prev-grandTotal');
+
+      // Reset uploaded image if preset selected
+      document.getElementById('preview-logo-img').classList.add('hidden');
+      logoText.classList.remove('hidden');
+
+      const presets = {
+        custom: {
+          name: 'FastNet Broadband Services Pvt. Ltd.',
+          gstin: '09AABCF1234K1Z5',
+          addr: '4th Floor, Cyber Heights, Gomti Nagar, Lucknow, Uttar Pradesh - 226010',
+          short: 'FN',
+          bg: 'bg-blue-600',
+          text: 'text-blue-600'
+        },
+        jio: {
+          name: 'Reliance Jio Infocomm Limited (JioFiber)',
+          gstin: '09AAACR5055K1Z2',
+          addr: 'Office - 101, Saffron, Nr. Centre Point, Panchwati 5 Rasta, Ambawadi, Ahmedabad - 380006',
+          short: 'Jio',
+          bg: 'bg-blue-700',
+          text: 'text-blue-700'
+        },
+        airtel: {
+          name: 'Bharti Airtel Limited (Airtel Xstream Fiber)',
+          gstin: '09AAACB2894G1Z9',
+          addr: 'Bharti Crescent, 1, Nelson Mandela Road, Vasant Kunj, Phase II, New Delhi - 110070',
+          short: 'airtel',
+          bg: 'bg-red-600',
+          text: 'text-red-600'
+        },
+        bsnl: {
+          name: 'Bharat Sanchar Nigam Limited (BSNL Bharat Fiber)',
+          gstin: '09AABCB5576G1Z3',
+          addr: 'Bharat Sanchar Bhawan, Harish Chandra Mathur Lane, Janpath, New Delhi - 110001',
+          short: 'BSNL',
+          bg: 'bg-sky-600',
+          text: 'text-sky-600'
+        },
+        act: {
+          name: 'Atria Convergence Technologies Ltd (ACT Fibernet)',
+          gstin: '29AAACA9012D1Z8',
+          addr: '2nd & 3rd Floor, Indian Express Building, No. 1, Queens Road, Bengaluru - 560001',
+          short: 'ACT',
+          bg: 'bg-rose-600',
+          text: 'text-rose-600'
+        }
+      };
+
+      const p = presets[preset];
+      document.getElementById('ispName').value = p.name;
+      document.getElementById('ispGstin').value = p.gstin;
+      document.getElementById('ispAddress').value = p.addr;
+      logoText.innerText = p.short;
+
+      accent.className = `h-2 w-full rounded-t mb-6 ${p.bg}`;
+      logoBox.className = `w-14 h-14 rounded-lg text-white flex items-center justify-center font-bold text-lg shrink-0 overflow-hidden ${p.bg}`;
+      grandTotal.className = p.text;
+
+      updatePreview();
+    }
+
+    function handleLogoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.getElementById('preview-logo-img');
+        img.src = e.target.result;
+        img.classList.remove('hidden');
+        document.getElementById('preview-logo-text').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updatePreview() {
+      // ISP Info
+      const ispName = document.getElementById('ispName').value || 'ISP Name';
+      document.getElementById('prev-ispName').innerText = ispName;
+      document.getElementById('prev-signIsp').innerText = 'For ' + ispName;
+      document.getElementById('prev-ispAddress').innerText = document.getElementById('ispAddress').value;
+      
+      const ispGstin = document.getElementById('ispGstin').value.trim();
+      document.getElementById('prev-ispGstin').innerText = ispGstin;
+      document.getElementById('prev-ispGstin-wrap').style.display = ispGstin ? 'block' : 'none';
+
+      document.getElementById('prev-invoiceNo').innerText = document.getElementById('invoiceNo').value;
+
+      // Customer Info
+      document.getElementById('prev-custName').innerText = document.getElementById('custName').value;
+      document.getElementById('prev-accountNo').innerText = document.getElementById('accountNo').value;
+      document.getElementById('prev-custAddress').innerText = document.getElementById('custAddress').value;
+
+      const custGstin = document.getElementById('custGstin').value.trim();
+      const custGstinWrap = document.getElementById('prev-custGstin-wrap');
+      if (custGstin) {
+        document.getElementById('prev-custGstin').innerText = custGstin;
+        custGstinWrap.classList.remove('hidden');
+      } else {
+        custGstinWrap.classList.add('hidden');
+      }
+
+      // Dates & Plan
+      document.getElementById('prev-billDate').innerText = formatDate(document.getElementById('billDate').value);
+      const fromD = formatDate(document.getElementById('fromDate').value);
+      const toD = formatDate(document.getElementById('toDate').value);
+      document.getElementById('prev-period').innerText = `${fromD} to ${toD}`;
+
+      document.getElementById('prev-planSpeed').innerText = document.getElementById('planSpeed').value;
+      document.getElementById('prev-planData').innerText = document.getElementById('planData').value;
+      document.getElementById('prev-planCycle').innerText = document.getElementById('planCycle').value;
+      document.getElementById('prev-paymentMode').innerText = document.getElementById('paymentMode').value;
+
+      // Status Badge
+      const status = document.getElementById('paymentStatus').value;
+      const badge = document.getElementById('prev-statusBadge');
+      badge.innerText = status;
+      badge.className = status === 'PAID'
+        ? 'inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-green-100 text-green-700'
+        : 'inline-block px-2.5 py-0.5 text-xs font-bold rounded bg-red-100 text-red-700';
+
+      // GST Reverse Calculation (18% Inclusive)
+      const total = parseFloat(document.getElementById('totalAmount').value) || 0;
+      const base = total / 1.18;
+      const totalGst = total - base;
+      const halfGst = totalGst / 2;
+
+      document.getElementById('prev-baseAmount').innerText = '₹' + base.toFixed(2);
+      document.getElementById('prev-subTotal').innerText = '₹' + base.toFixed(2);
+      document.getElementById('prev-cgst').innerText = '₹' + halfGst.toFixed(2);
+      document.getElementById('prev-sgst').innerText = '₹' + halfGst.toFixed(2);
+      document.getElementById('prev-igst').innerText = '₹' + totalGst.toFixed(2);
+      document.getElementById('prev-grandTotal').innerText = '₹' + total.toFixed(2);
+
+      // Toggle CGST+SGST vs IGST
+      const gstType = document.getElementById('gstType').value;
+      if (gstType === 'intra') {
+        document.getElementById('intra-gst-rows').classList.remove('hidden');
+        document.getElementById('inter-gst-row').classList.add('hidden');
+      } else {
+        document.getElementById('intra-gst-rows').classList.add('hidden');
+        document.getElementById('inter-gst-row').classList.remove('hidden');
+      }
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('invoice-preview');
+      const invoiceNo = document.getElementById('invoiceNo').value || 'Internet-Bill';
+      const opt = {
+        margin: 0.3,
+        filename: `${invoiceNo}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    function resetForm() {
+      document.getElementById('ispPreset').value = 'custom';
+      applyPreset();
+      document.getElementById('custName').value = '';
+      document.getElementById('custGstin').value = '';
+      document.getElementById('custAddress').value = '';
+      document.getElementById('totalAmount').value = '999';
+      updatePreview();
+    }
+  </script>
+</body>
+</html>
